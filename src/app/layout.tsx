@@ -1,7 +1,10 @@
+
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
+import { AuthProvider } from "@/components/providers/auth-provider";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
   title: "FocusFlow",
@@ -24,7 +27,9 @@ export default function RootLayout({
         />
       </head>
       <body className={cn("min-h-screen bg-background font-body antialiased")}>
-        {children}
+        <AuthProvider>
+            {children}
+        </AuthProvider>
         <Toaster />
       </body>
     </html>
