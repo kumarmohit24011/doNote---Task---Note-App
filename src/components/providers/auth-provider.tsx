@@ -2,7 +2,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { onAuthStateChanged, type User } from 'firebase/auth';
+import { onAuthStateChanged, type User, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { usePathname, useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -39,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user, loading, pathname, router]);
 
+
   if (loading || (!user && pathname !== '/login')) {
     return (
       <div className="flex flex-col min-h-screen">
@@ -70,3 +71,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+    

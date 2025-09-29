@@ -1,7 +1,7 @@
 
 "use client";
 
-import { GoogleAuthProvider, signInWithPopup, fetchSignInMethodsForEmail } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, fetchSignInMethodsForEmail, deleteUser } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,17 +34,21 @@ export default function LoginPage() {
           throw new Error("Could not retrieve email from Google Sign-In.");
       }
       
+      // This is the crucial check. It fetches all sign-in methods for the email.
       const methods = await fetchSignInMethodsForEmail(auth, email);
       
-      // If the only sign-in method is "google.com" and there's only one,
-      // it implies the user was just created.
-      if (methods.length === 1 && methods[0] === "google.com") {
+      // If the only sign-in method is "google.com", it means the user was just created by this sign-in attempt.
+      // A pre-existing user would either have more methods (e.g., 'password') or would have been created at an earlier time.
+      // The `getAdditionalUserInfo` check helps confirm if it's a new user in this session.
+      const { getAdditionalUserInfo } = await import("firebase/auth");
+      const additionalInfo = getAdditionalUserInfo(result);
+
+      if (additionalInfo?.isNewUser) {
         // This is a new user who wasn't pre-registered.
         // We deny access by signing them out and deleting the temporary account.
         const userToDelete = result.user;
-        await auth.signOut();
-        // This delete operation requires the user to have been recently authenticated, which they were.
-        await userToDelete.delete();
+        await signOut(auth);
+        await deleteUser(userToDelete);
         
         toast({
           title: "Access Denied",
@@ -52,16 +56,24 @@ export default function LoginPage() {
           variant: "destructive",
         });
       }
-      // If methods.length > 1, or the method isn't just "google.com" (e.g. 'password'), they existed before, so we allow them.
+      // If it's not a new user, they existed before, so we allow the sign-in to complete.
     } catch (error: any) {
         // Don't show an error toast if the user simply closes the popup.
         if (error.code !== 'auth/popup-closed-by-user') {
             console.error("Error signing in with Google", error);
-            toast({
-                title: "Sign-in error",
-                description: "An unexpected error occurred during sign-in. Please try again.",
-                variant: "destructive",
-            });
+            if (error.code === 'auth/user-not-found') {
+                 toast({
+                    title: "Access Denied",
+                    description: "This account is not authorized.",
+                    variant: "destructive",
+                });
+            } else {
+                toast({
+                    title: "Sign-in error",
+                    description: "An unexpected error occurred during sign-in. Please try again.",
+                    variant: "destructive",
+                });
+            }
         }
     } finally {
         setIsSigningIn(false);
@@ -97,3 +109,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    
