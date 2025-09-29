@@ -2,14 +2,10 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { onAuthStateChanged, type User, signOut } from 'firebase/auth';
+import { onAuthStateChanged, type User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { usePathname, useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
-import { toast } from '@/hooks/use-toast';
-
-// IMPORTANT: Replace this with your own email address to restrict access.
-const ALLOWED_USERS = ['your.email@example.com'];
 
 interface AuthContextType {
   user: User | null;
@@ -26,17 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && user.email && !ALLOWED_USERS.includes(user.email)) {
-        signOut(auth);
-        setUser(null);
-        toast({
-          variant: "destructive",
-          title: "Unauthorized",
-          description: "You are not authorized to access this application.",
-        });
-      } else {
-        setUser(user);
-      }
+      setUser(user);
       setLoading(false);
     });
 
