@@ -19,9 +19,9 @@ export default function NotesPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   return (
-    <div className="container mx-auto py-4">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold font-headline">My Notes</h1>
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold font-headline">My Notes</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -29,7 +29,7 @@ export default function NotesPage() {
               Add Note
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[480px]">
             <DialogHeader>
               <DialogTitle>Add a new note</DialogTitle>
             </DialogHeader>
@@ -39,14 +39,17 @@ export default function NotesPage() {
       </div>
 
       {notes.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {notes.map((note) => (
             <NoteCard key={note.id} note={note} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg mt-6">
-          <p className="text-muted-foreground">You haven't created any notes yet.</p>
+        <div className="flex-1 flex items-center justify-center text-center py-12 border-2 border-dashed rounded-lg mt-6">
+          <div>
+            <h2 className="text-xl font-semibold">No Notes Yet</h2>
+            <p className="text-muted-foreground mt-2">Click "Add Note" to create your first note.</p>
+          </div>
         </div>
       )}
     </div>

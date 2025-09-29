@@ -69,7 +69,7 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-4">
         <FormField
           control={form.control}
           name="title"
@@ -109,16 +109,16 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "w-full pl-3 text-left font-normal",
+                          "w-full justify-start text-left font-normal",
                           !field.value && "text-muted-foreground"
                         )}
                       >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
                         {field.value ? (
                           format(field.value, "PPP")
                         ) : (
                           <span>Pick a date</span>
                         )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>

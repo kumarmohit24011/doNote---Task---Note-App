@@ -5,6 +5,7 @@ import { Task } from "@/lib/types";
 import { TaskItem } from "./task-item";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 export function TaskList({ tasks }: { tasks: Task[] }) {
   const { toggleTaskCompletion } = useAppStore();
@@ -13,16 +14,29 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
   const incompleteTasks = sortedTasks.filter((task) => !task.completed);
   const completedTasks = sortedTasks.filter((task) => task.completed);
 
+  const NoTasks = ({ title, description }: { title: string, description: string }) => (
+    <div className="text-center py-12">
+        <h3 className="font-semibold text-lg">{title}</h3>
+        <p className="text-muted-foreground mt-2 text-sm">{description}</p>
+    </div>
+  )
+
   return (
     <Tabs defaultValue="incomplete">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="incomplete">Incomplete</TabsTrigger>
-        <TabsTrigger value="completed">Completed</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-2 mb-4">
+        <TabsTrigger value="incomplete">
+          Incomplete
+          <Badge variant="secondary" className="ml-2">{incompleteTasks.length}</Badge>
+        </TabsTrigger>
+        <TabsTrigger value="completed">
+          Completed
+          <Badge variant="secondary" className="ml-2">{completedTasks.length}</Badge>
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="incomplete">
         <Card>
-          <CardContent className="p-0">
-            <div className="space-y-4 p-4">
+          <CardContent className="p-2 md:p-4">
+            <div className="space-y-3">
               {incompleteTasks.length > 0 ? (
                 incompleteTasks.map((task) => (
                   <TaskItem
@@ -32,9 +46,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
                   />
                 ))
               ) : (
-                <p className="text-center text-muted-foreground pt-4">
-                  All tasks completed! Great job!
-                </p>
+                <NoTasks title="All tasks completed!" description="Great job staying on top of your work." />
               )}
             </div>
           </CardContent>
@@ -42,8 +54,8 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
       </TabsContent>
       <TabsContent value="completed">
         <Card>
-          <CardContent className="p-0">
-            <div className="space-y-4 p-4">
+          <CardContent className="p-2 md:p-4">
+            <div className="space-y-3">
               {completedTasks.length > 0 ? (
                 completedTasks.map((task) => (
                   <TaskItem
@@ -53,9 +65,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
                   />
                 ))
               ) : (
-                <p className="text-center text-muted-foreground pt-4">
-                  No completed tasks yet.
-                </p>
+                <NoTasks title="No completed tasks" description="Completed tasks will appear here." />
               )}
             </div>
           </CardContent>

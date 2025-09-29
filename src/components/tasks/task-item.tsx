@@ -10,7 +10,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, GripVertical } from "lucide-react";
 
 export function TaskItem({
   task,
@@ -20,19 +20,22 @@ export function TaskItem({
   onToggleCompletion: (id: string) => void;
 }) {
   const priorityStyles = {
-    high: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-    medium: "bg-accent text-accent-foreground hover:bg-accent/90",
-    low: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+    high: "border-red-500/80 bg-red-500/10 text-red-700 dark:text-red-400",
+    medium: "border-yellow-500/80 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400",
+    low: "border-blue-500/80 bg-blue-500/10 text-blue-700 dark:text-blue-400",
   };
   
   const isOverdue = !task.completed && new Date(task.dueDate) < new Date(new Date().setHours(0,0,0,0));
 
   return (
     <div
-      className="rounded-lg border bg-card p-4 transition-all hover:shadow-md animate-in fade-in-0 duration-300"
+      className={cn(
+        "rounded-lg border bg-card p-3 transition-all animate-in fade-in-0 duration-300",
+        task.completed ? "bg-muted/50" : "hover:bg-muted/50"
+      )}
     >
       <Collapsible>
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-3">
           <Checkbox
             id={`task-${task.id}`}
             checked={task.completed}
@@ -40,7 +43,7 @@ export function TaskItem({
             className="mt-1"
             aria-label={`Mark task ${task.title} as ${task.completed ? 'incomplete' : 'complete'}`}
           />
-          <div className="flex-grow grid gap-1">
+          <div className="flex-grow grid gap-1.5">
             <label
               htmlFor={`task-${task.id}`}
               className={cn(
@@ -52,13 +55,14 @@ export function TaskItem({
             </label>
             <div className="flex items-center gap-2 flex-wrap">
               <Badge
-                className={cn("capitalize", priorityStyles[task.priority])}
+                variant="outline"
+                className={cn("capitalize text-xs", priorityStyles[task.priority])}
               >
                 {task.priority}
               </Badge>
               <span className={cn(
                 "text-sm text-muted-foreground",
-                isOverdue && "text-destructive font-medium"
+                isOverdue && "text-destructive font-semibold"
               )}>
                 {format(new Date(task.dueDate), "MMM d, yyyy")}
               </span>
@@ -66,7 +70,7 @@ export function TaskItem({
           </div>
           {task.description && (
             <CollapsibleTrigger asChild>
-              <button className="p-1 rounded-full hover:bg-muted -mr-2" aria-label="Toggle task description">
+              <button className="p-1.5 rounded-md hover:bg-muted -mr-2" aria-label="Toggle task description">
                 <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
               </button>
             </CollapsibleTrigger>
@@ -74,7 +78,7 @@ export function TaskItem({
         </div>
         {task.description && (
           <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-            <p className="text-sm text-muted-foreground mt-2 pl-10 pt-2 border-t mt-4">
+            <p className="text-sm text-muted-foreground mt-3 pl-8 pt-3 border-t">
               {task.description}
             </p>
           </CollapsibleContent>

@@ -46,14 +46,14 @@ export function NoteCard({ note }: { note: Note }) {
   };
 
   return (
-    <Card className="flex flex-col animate-in fade-in-0 zoom-in-95 duration-500">
+    <Card className="flex flex-col animate-in fade-in-0 zoom-in-95 duration-500 hover:shadow-lg transition-shadow">
       <CardHeader>
         <div className="flex justify-between items-start">
-            <CardTitle className="pr-4">{note.title}</CardTitle>
+            <CardTitle className="pr-4 text-lg">{note.title}</CardTitle>
             <AlertDialog>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 -mt-2 -mr-2 flex-shrink-0">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 -mt-2 -mr-2 flex-shrink-0 text-muted-foreground hover:text-foreground">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -82,12 +82,14 @@ export function NoteCard({ note }: { note: Note }) {
               </AlertDialogContent>
             </AlertDialog>
         </div>
-        <CardDescription>
-          {note.createdAt && format(new Date(note.createdAt), "MMM d, yyyy 'at' h:mm a")}
-        </CardDescription>
+        {note.createdAt && (
+          <CardDescription>
+            {format(new Date(note.createdAt), "MMM d, yyyy")}
+          </CardDescription>
+        )}
       </CardHeader>
       <CardContent className="flex-grow">
-        <p className="text-sm text-muted-foreground whitespace-pre-wrap line-clamp-4">
+        <p className="text-sm text-muted-foreground whitespace-pre-wrap line-clamp-6">
           {note.content}
         </p>
       </CardContent>

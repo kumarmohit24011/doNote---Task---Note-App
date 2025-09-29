@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import Link from "next/link";
@@ -14,6 +13,8 @@ import {
   ListTodo,
   LogOut,
   User as UserIcon,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,7 +65,7 @@ function NavLink({
         isMobile && "text-lg"
       )}
     >
-      <Icon className="h-4 w-4" />
+      <Icon className="h-5 w-5" />
       {label}
     </Link>
   );
@@ -82,8 +83,8 @@ function UserMenu() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-            <Avatar className="h-8 w-8">
+          <Button variant="secondary" className="relative h-9 w-9 rounded-full">
+            <Avatar className="h-9 w-9">
               <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
               <AvatarFallback>
                 <UserIcon/>
@@ -117,17 +118,17 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     
   return (
     <AppProvider>
-      <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-        <div className="hidden border-r bg-card md:block">
+      <div className="grid min-h-screen w-full md:grid-cols-[240px_1fr]">
+        <div className="hidden border-r bg-muted/40 md:block">
           <div className="flex h-full max-h-screen flex-col gap-2">
-            <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+            <div className="flex h-16 items-center border-b px-6">
               <Link href="/" className="flex items-center gap-2 font-semibold">
                 <Activity className="h-6 w-6 text-primary" />
-                <span className="font-headline">FocusFlow</span>
+                <span className="text-lg font-headline">FocusFlow</span>
               </Link>
             </div>
             <div className="flex-1">
-              <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+              <nav className="grid items-start px-4 text-base font-medium">
                 {navItems.map((item) => (
                   <NavLink key={item.href} {...item} />
                 ))}
@@ -136,7 +137,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div className="flex flex-col">
-          <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6">
+          <header className="flex h-16 items-center gap-4 border-b bg-muted/40 px-6">
             <Sheet>
               <SheetTrigger asChild>
                 <Button
@@ -166,7 +167,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <div className="w-full flex-1" />
             <UserMenu />
           </header>
-          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-8">
             {children}
           </main>
         </div>

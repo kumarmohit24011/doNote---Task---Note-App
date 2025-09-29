@@ -19,9 +19,9 @@ export default function TasksPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <div className="container mx-auto py-4">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold font-headline">My Tasks</h1>
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold font-headline">My Tasks</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -29,7 +29,7 @@ export default function TasksPage() {
               Add Task
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[480px]">
             <DialogHeader>
               <DialogTitle>Add a new task</DialogTitle>
             </DialogHeader>
