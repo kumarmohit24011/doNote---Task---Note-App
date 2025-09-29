@@ -41,11 +41,10 @@ export default function DashboardPage() {
   const recentNotes = notes.slice(0, 4);
   
   const openTasks = tasks.filter(task => !task.completed);
-  const completedTasks = tasks.filter(task => task.completed);
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2">
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-lg font-medium">Open Tasks</CardTitle>
@@ -54,16 +53,6 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-4xl font-bold">{openTasks.length}</div>
             <p className="text-md text-muted-foreground">tasks to be completed</p>
-          </CardContent>
-        </Card>
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg font-medium">Completed Tasks</CardTitle>
-            <CheckCircle2 className="h-6 w-6 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold">{completedTasks.length}</div>
-            <p className="text-md text-muted-foreground">tasks already done</p>
           </CardContent>
         </Card>
         <Card className="hover:shadow-md transition-shadow">
