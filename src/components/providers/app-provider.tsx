@@ -4,19 +4,16 @@
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import {
-  collection,
-  onSnapshot,
-  addDoc,
-  updateDoc,
-  doc,
-  deleteDoc,
-  query,
-  orderBy,
-  where,
-  Timestamp,
+  getDatabase,
+  ref,
+  onValue,
+  push,
+  update,
+  remove,
   serverTimestamp,
-  getFirestore,
-} from "firebase/firestore";
+  query,
+  orderByChild,
+} from "firebase/database";
 import type { Task, Note } from "@/lib/types";
 import { useAuth } from "./auth-provider";
 import { app } from "@/lib/firebase";
@@ -40,47 +37,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
-  const db = getFirestore(app);
+  const db = getDatabase(app);
 
   useEffect(() => {
     if (user) {
-      const tasksQuery = query(
-        collection(db, "users", user.uid, "tasks"),
-        orderBy("createdAt", "desc")
-      );
-      const unsubscribeTasks = onSnapshot(tasksQuery, (querySnapshot) => {
-        const tasksData: Task[] = querySnapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            title: data.title,
-            description: data.description,
-            dueDate: data.dueDate,
-            priority: data.priority,
-            completed: data.completed,
-            createdAt: (data.createdAt as Timestamp)?.toDate().toISOString(),
-          };
+      const tasksRef = query(ref(db, `users/${user.uid}/tasks`), orderByChild('createdAt'));
+      const unsubscribeTasks = onValue(tasksRef, (snapshot) => {
+        const tasksData: Task[] = [];
+        snapshot.forEach((childSnapshot) => {
+          tasksData.push({ id: childSnapshot.key!, ...childSnapshot.val() });
         });
-        setTasks(tasksData);
+        setTasks(tasksData.reverse());
       });
 
-      const notesQuery = query(
-        collection(db, "users", user.uid, "notes"),
-        orderBy("createdAt", "desc")
-      );
-      const unsubscribeNotes = onSnapshot(notesQuery, (querySnapshot) => {
-        const notesData: Note[] = querySnapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            title: data.title,
-            content: data.content,
-            createdAt: (data.createdAt as Timestamp)?.toDate().toISOString(),
-          };
+      const notesRef = query(ref(db, `users/${user.uid}/notes`), orderByChild('createdAt'));
+      const unsubscribeNotes = onValue(notesRef, (snapshot) => {
+        const notesData: Note[] = [];
+        snapshot.forEach((childSnapshot) => {
+          notesData.push({ id: childSnapshot.key!, ...childSnapshot.val() });
         });
-        setNotes(notesData);
+        setNotes(notesData.reverse());
       });
-      
+
       setIsInitialized(true);
 
       return () => {
@@ -88,15 +66,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
         unsubscribeNotes();
       };
     } else {
-        setTasks([]);
-        setNotes([]);
-        setIsInitialized(false);
+      setTasks([]);
+      setNotes([]);
+      setIsInitialized(false);
     }
   }, [user, db]);
 
   const addTask = async (task: Omit<Task, "id" | "completed" | "createdAt">) => {
     if (!user) return;
-    await addDoc(collection(db, "users", user.uid, "tasks"), {
+    const tasksRef = ref(db, `users/${user.uid}/tasks`);
+    await push(tasksRef, {
       ...task,
       completed: false,
       createdAt: serverTimestamp(),
@@ -105,49 +84,64 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const updateTask = async (id: string, updates: Partial<Task>) => {
     if (!user) return;
-    const taskDoc = doc(db, "users", user.uid, "tasks", id);
-    await updateDoc(taskDoc, updates);
+    const taskRef = ref(db, `users/${user.uid}/tasks/${id}`);
+    await update(taskRef, updates);
   };
-  
+
   const toggleTaskCompletion = async (id: string) => {
     if (!user) return;
-    const taskToToggle = tasks.find(t => t.id === id);
+    const taskToToggle = tasks.find((t) => t.id === id);
     if (taskToToggle) {
-        const taskDoc = doc(db, "users", user.uid, "tasks", id);
-        await updateDoc(taskDoc, { completed: !taskToToggle.completed });
+      const taskRef = ref(db, `users/${user.uid}/tasks/${id}`);
+      await update(taskRef, { completed: !taskToToggle.completed });
     }
   };
 
   const deleteTask = async (id: string) => {
-    if(!user) return;
-    await deleteDoc(doc(db, "users", user.uid, "tasks", id));
-  }
+    if (!user) return;
+    const taskRef = ref(db, `users/${user.uid}/tasks/${id}`);
+    await remove(taskRef);
+  };
 
   const addNote = async (note: Omit<Note, "id" | "createdAt">) => {
     if (!user) return;
-    await addDoc(collection(db, "users", user.uid, "notes"), {
-        ...note,
-        createdAt: serverTimestamp(),
+    const notesRef = ref(db, `users/${user.uid}/notes`);
+    await push(notesRef, {
+      ...note,
+      createdAt: serverTimestamp(),
     });
   };
-  
+
   const updateNote = async (id: string, updates: Partial<Note>) => {
     if (!user) return;
-    const noteDoc = doc(db, "users", user.uid, "notes", id);
-    await updateDoc(noteDoc, updates);
+    const noteRef = ref(db, `users/${user.uid}/notes/${id}`);
+    await update(noteRef, updates);
   };
 
   const deleteNote = async (id: string) => {
     if (!user) return;
-    await deleteDoc(doc(db, "users", user.uid, "notes", id));
+    const noteRef = ref(db, `users/${user.uid}/notes/${id}`);
+    await remove(noteRef);
   };
 
   if (user && !isInitialized) {
-      return null;
+    return null;
   }
 
   return (
-    <AppContext.Provider value={{ tasks, notes, addTask, updateTask, toggleTaskCompletion, deleteTask, addNote, updateNote, deleteNote }}>
+    <AppContext.Provider
+      value={{
+        tasks,
+        notes,
+        addTask,
+        updateTask,
+        toggleTaskCompletion,
+        deleteTask,
+        addNote,
+        updateNote,
+        deleteNote,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

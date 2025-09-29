@@ -1,7 +1,7 @@
 
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
   projectId: "studio-2802846471-12997",
@@ -9,11 +9,12 @@ const firebaseConfig = {
   apiKey: "AIzaSyCalNxIND5McMxJ9iUUl04gOwsFX2nixp0",
   authDomain: "studio-2802846471-12997.firebaseapp.com",
   measurementId: "",
-  messagingSenderId: "261486337931"
+  messagingSenderId: "261486337931",
+  databaseURL: "https://studio-2802846471-12997-default-rtdb.firebaseio.com"
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
-const db = getFirestore(app);
+const db = getDatabase(app);
 
 export { app, auth, db };
