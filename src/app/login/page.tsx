@@ -36,8 +36,9 @@ export default function LoginPage() {
       
       const methods = await fetchSignInMethodsForEmail(auth, email);
       
-      if (methods.length === 0) {
-        // This means the user doesn't exist in Firebase Auth yet.
+      // This is a new user if there was only one sign-in method (the one just created).
+      if (methods.length <= 1 && methods[0] === "google.com") {
+        // This means the user doesn't exist in Firebase Auth yet, beyond this new temporary login.
         // We can sign them out and show an error.
         await auth.signOut();
         // also delete the user that was just created
@@ -48,7 +49,7 @@ export default function LoginPage() {
           variant: "destructive",
         });
       }
-      // If methods.length > 0, the user already exists, and signInWithPopup has already signed them in.
+      // If methods.length > 1, or the method isn't just Google, they existed before.
     } catch (error: any) {
         if (error.code !== 'auth/popup-closed-by-user') {
             console.error("Error signing in with Google", error);
