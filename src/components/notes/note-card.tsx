@@ -46,20 +46,20 @@ export function NoteCard({ note }: { note: Note }) {
   };
 
   return (
-    <Card className="flex flex-col animate-in fade-in-0 zoom-in-95 duration-500 hover:shadow-lg transition-shadow">
+    <Card className="flex flex-col animate-in fade-in-0 zoom-in-95 duration-500 hover:shadow-xl transition-shadow bg-card/80 dark:bg-card">
       <CardHeader>
         <div className="flex justify-between items-start">
-            <CardTitle className="pr-4 text-lg">{note.title}</CardTitle>
+            <CardTitle className="pr-4 text-xl font-headline">{note.title}</CardTitle>
             <AlertDialog>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-8 w-8 -mt-2 -mr-2 flex-shrink-0 text-muted-foreground hover:text-foreground">
-                    <MoreVertical className="h-4 w-4" />
+                    <MoreVertical className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <AlertDialogTrigger asChild>
-                    <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer">
+                    <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer text-base">
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete
                     </DropdownMenuItem>
@@ -68,8 +68,8 @@ export function NoteCard({ note }: { note: Note }) {
               </DropdownMenu>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
+                  <AlertDialogTitle className="text-2xl font-headline">Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription className="text-lg">
                     This action cannot be undone. This will permanently delete your note titled "{note.title}".
                   </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -83,13 +83,13 @@ export function NoteCard({ note }: { note: Note }) {
             </AlertDialog>
         </div>
         {note.createdAt && (
-          <CardDescription>
-            {format(new Date(note.createdAt), "MMM d, yyyy")}
+          <CardDescription className="text-sm">
+            {format(new Date(note.createdAt), "MMMM d, yyyy")}
           </CardDescription>
         )}
       </CardHeader>
       <CardContent className="flex-grow">
-        <p className="text-sm text-muted-foreground whitespace-pre-wrap line-clamp-6">
+        <p className="text-md text-muted-foreground whitespace-pre-wrap line-clamp-[8]">
           {note.content}
         </p>
       </CardContent>
