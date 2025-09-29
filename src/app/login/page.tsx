@@ -1,12 +1,14 @@
 
 "use client";
 
-import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, fetchSignInMethodsForEmail } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Activity } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 const GoogleIcon = () => (
     <svg className="h-5 w-5" viewBox="0 0 48 48">
@@ -19,23 +21,48 @@ const GoogleIcon = () => (
 
 export default function LoginPage() {
   const { user } = useAuth();
+  const { toast } = useToast();
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   const handleSignIn = async () => {
+    setIsSigningIn(true);
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error("Error signing in with Google", error);
+      const result = await signInWithPopup(auth, provider);
+      const email = result.user.email;
+      if (!email) {
+          throw new Error("Could not retrieve email from Google Sign-In.");
+      }
+      
+      const methods = await fetchSignInMethodsForEmail(auth, email);
+      
+      if (methods.length === 0) {
+        // This means the user doesn't exist in Firebase Auth yet.
+        // We can sign them out and show an error.
+        await auth.signOut();
+        // also delete the user that was just created
+        await result.user.delete();
+        toast({
+          title: "Sign-in failed",
+          description: "Your account is not authorized to access this application. Please contact the administrator.",
+          variant: "destructive",
+        });
+      }
+      // If methods.length > 0, the user already exists, and signInWithPopup has already signed them in.
+    } catch (error: any) {
+        if (error.code !== 'auth/popup-closed-by-user') {
+            console.error("Error signing in with Google", error);
+            toast({
+                title: "Sign-in error",
+                description: "An unexpected error occurred during sign-in. Please try again.",
+                variant: "destructive",
+            });
+        }
+    } finally {
+        setIsSigningIn(false);
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error("Error signing out", error);
-    }
-  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
@@ -52,14 +79,12 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           {user ? (
-            <div className="flex flex-col items-center gap-4">
-              <p>Welcome, {user.displayName}!</p>
-              <Button onClick={handleSignOut} variant="outline">Sign Out</Button>
-            </div>
+             <div className="flex flex-col items-center gap-4">
+                <p>Redirecting to your dashboard...</p>
+             </div>
           ) : (
-            <Button onClick={handleSignIn} className="w-full">
-              <GoogleIcon />
-              Sign in with Google
+            <Button onClick={handleSignIn} className="w-full" disabled={isSigningIn}>
+              {isSigningIn ? 'Signing in...' : <><GoogleIcon /> Sign in with Google</>}
             </Button>
           )}
         </CardContent>
