@@ -35,9 +35,13 @@ import { toast } from "@/hooks/use-toast";
 export function NoteCard({ note }: { note: Note }) {
   const { deleteNote } = useAppStore();
 
-  const handleDelete = () => {
-    deleteNote(note.id);
-    toast({ title: "Note deleted", description: `"${note.title}" was successfully deleted.` });
+  const handleDelete = async () => {
+    try {
+        await deleteNote(note.id);
+        toast({ title: "Note deleted", description: `"${note.title}" was successfully deleted.` });
+    } catch (error) {
+        toast({ title: "Error", description: "Could not delete note. Please try again.", variant: "destructive" });
+    }
   };
 
   return (
@@ -78,7 +82,7 @@ export function NoteCard({ note }: { note: Note }) {
             </AlertDialog>
         </div>
         <CardDescription>
-          {format(new Date(note.createdAt), "MMM d, yyyy 'at' h:mm a")}
+          {note.createdAt && format(new Date(note.createdAt), "MMM d, yyyy 'at' h:mm a")}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow">

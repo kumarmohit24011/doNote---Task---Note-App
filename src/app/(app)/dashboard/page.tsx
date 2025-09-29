@@ -38,7 +38,6 @@ export default function DashboardPage() {
     .slice(0, 5);
 
   const recentNotes = notes
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 3);
   
   const openTasks = tasks.filter(task => !task.completed);

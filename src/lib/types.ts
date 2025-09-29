@@ -7,6 +7,7 @@ export interface Task {
   dueDate: string; // YYYY-MM-DD
   priority: Priority;
   completed: boolean;
+  createdAt: string; // ISO string
 }
 
 export interface Note {

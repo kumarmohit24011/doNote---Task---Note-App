@@ -34,10 +34,14 @@ export function AddNoteForm({ onFinished }: { onFinished: () => void }) {
     },
   });
 
-  function onSubmit(data: NoteFormValues) {
-    addNote(data);
-    toast({ title: "Note created!", description: `A new note titled "${data.title}" has been saved.` });
-    onFinished();
+  async function onSubmit(data: NoteFormValues) {
+    try {
+        await addNote(data);
+        toast({ title: "Note created!", description: `A new note titled "${data.title}" has been saved.` });
+        onFinished();
+    } catch (error) {
+        toast({ title: "Error", description: "Could not create note. Please try again.", variant: "destructive" });
+    }
   }
 
   return (
@@ -69,7 +73,9 @@ export function AddNoteForm({ onFinished }: { onFinished: () => void }) {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">Save Note</Button>
+        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? 'Saving Note...' : 'Save Note'}
+        </Button>
       </form>
     </Form>
   );

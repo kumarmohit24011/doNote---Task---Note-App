@@ -53,14 +53,18 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
     },
   });
 
-  function onSubmit(data: TaskFormValues) {
-    addTask({
-      ...data,
-      dueDate: format(data.dueDate, "yyyy-MM-dd"),
-      description: data.description || "",
-    });
-    toast({ title: "Task added!", description: `"${data.title}" has been added to your list.` });
-    onFinished();
+  async function onSubmit(data: TaskFormValues) {
+    try {
+      await addTask({
+        ...data,
+        dueDate: format(data.dueDate, "yyyy-MM-dd"),
+        description: data.description || "",
+      });
+      toast({ title: "Task added!", description: `"${data.title}" has been added to your list.` });
+      onFinished();
+    } catch (error) {
+      toast({ title: "Error", description: "Could not add task. Please try again.", variant: "destructive" });
+    }
   }
 
   return (
@@ -158,7 +162,9 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
             )}
           />
         </div>
-        <Button type="submit" className="w-full">Add Task</Button>
+        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? 'Adding Task...' : 'Add Task'}
+        </Button>
       </form>
     </Form>
   );

@@ -18,8 +18,6 @@ export default function NotesPage() {
   const { notes } = useAppStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
-  const sortedNotes = [...notes].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
   return (
     <div className="container mx-auto py-4">
       <div className="flex items-center justify-between mb-6">
@@ -40,9 +38,9 @@ export default function NotesPage() {
         </Dialog>
       </div>
 
-      {sortedNotes.length > 0 ? (
+      {notes.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {sortedNotes.map((note) => (
+          {notes.map((note) => (
             <NoteCard key={note.id} note={note} />
           ))}
         </div>

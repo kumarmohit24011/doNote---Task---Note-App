@@ -1,115 +1,153 @@
+
 "use client";
 
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  doc,
+  deleteDoc,
+  query,
+  orderBy,
+  where,
+  Timestamp,
+  serverTimestamp,
+  getFirestore,
+} from "firebase/firestore";
 import type { Task, Note } from "@/lib/types";
-
-const sampleTasks: Task[] = [
-  { id: '1', title: 'Finalize project proposal', description: 'Draft and finalize the proposal for the Q3 project.', dueDate: '2024-08-15', priority: 'high', completed: false },
-  { id: '2', title: 'Schedule team meeting', description: 'Organize a meeting to discuss project milestones.', dueDate: '2024-08-10', priority: 'medium', completed: false },
-  { id: '3', title: 'Buy groceries', description: 'Milk, bread, eggs, and cheese.', dueDate: '2024-08-08', priority: 'low', completed: true },
-];
-
-const sampleNotes: Note[] = [
-    { id: '1', title: 'Meeting Notes 2024-08-05', content: 'Discussed Q3 roadmap. Key takeaways: focus on user retention.', createdAt: new Date().toISOString() },
-    { id: '2', title: 'Brainstorming ideas', content: 'New feature ideas: AI-powered scheduling, dark mode improvements.', createdAt: new Date().toISOString() },
-];
+import { useAuth } from "./auth-provider";
+import { app } from "@/lib/firebase";
 
 interface AppStore {
   tasks: Task[];
   notes: Note[];
-  addTask: (task: Omit<Task, "id" | "completed">) => void;
-  updateTask: (id: string, updates: Partial<Task>) => void;
-  toggleTaskCompletion: (id: string) => void;
-  addNote: (note: Omit<Note, "id" | "createdAt">) => void;
-  updateNote: (id: string, updates: Partial<Note>) => void;
-  deleteNote: (id: string) => void;
+  addTask: (task: Omit<Task, "id" | "completed" | "createdAt">) => Promise<void>;
+  updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
+  toggleTaskCompletion: (id: string) => Promise<void>;
+  deleteTask: (id: string) => Promise<void>;
+  addNote: (note: Omit<Note, "id" | "createdAt">) => Promise<void>;
+  updateNote: (id: string, updates: Partial<Note>) => Promise<void>;
+  deleteNote: (id: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppStore | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const db = getFirestore(app);
 
   useEffect(() => {
-    try {
-      const storedTasks = localStorage.getItem("focusflow-tasks");
-      const storedNotes = localStorage.getItem("focusflow-notes");
+    if (user) {
+      const tasksQuery = query(
+        collection(db, "users", user.uid, "tasks"),
+        orderBy("createdAt", "desc")
+      );
+      const unsubscribeTasks = onSnapshot(tasksQuery, (querySnapshot) => {
+        const tasksData: Task[] = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            title: data.title,
+            description: data.description,
+            dueDate: data.dueDate,
+            priority: data.priority,
+            completed: data.completed,
+            createdAt: (data.createdAt as Timestamp)?.toDate().toISOString(),
+          };
+        });
+        setTasks(tasksData);
+      });
+
+      const notesQuery = query(
+        collection(db, "users", user.uid, "notes"),
+        orderBy("createdAt", "desc")
+      );
+      const unsubscribeNotes = onSnapshot(notesQuery, (querySnapshot) => {
+        const notesData: Note[] = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            title: data.title,
+            content: data.content,
+            createdAt: (data.createdAt as Timestamp)?.toDate().toISOString(),
+          };
+        });
+        setNotes(notesData);
+      });
       
-      setTasks(storedTasks ? JSON.parse(storedTasks) : sampleTasks);
-      setNotes(storedNotes ? JSON.parse(storedNotes) : sampleNotes);
+      setIsInitialized(true);
 
-    } catch (error) {
-      console.error("Failed to parse from localStorage", error);
-      setTasks(sampleTasks);
-      setNotes(sampleNotes);
+      return () => {
+        unsubscribeTasks();
+        unsubscribeNotes();
+      };
+    } else {
+        setTasks([]);
+        setNotes([]);
+        setIsInitialized(false);
     }
-    setIsInitialized(true);
-  }, []);
+  }, [user, db]);
 
-  useEffect(() => {
-    if (isInitialized) {
-      localStorage.setItem("focusflow-tasks", JSON.stringify(tasks));
-    }
-  }, [tasks, isInitialized]);
-  
-  useEffect(() => {
-    if (isInitialized) {
-      localStorage.setItem("focusflow-notes", JSON.stringify(notes));
-    }
-  }, [notes, isInitialized]);
-
-
-  const addTask = (task: Omit<Task, "id" | "completed">) => {
-    const newTask: Task = {
+  const addTask = async (task: Omit<Task, "id" | "completed" | "createdAt">) => {
+    if (!user) return;
+    await addDoc(collection(db, "users", user.uid, "tasks"), {
       ...task,
-      id: crypto.randomUUID(),
       completed: false,
-    };
-    setTasks((prev) => [newTask, ...prev]);
+      createdAt: serverTimestamp(),
+    });
   };
 
-  const updateTask = (id: string, updates: Partial<Task>) => {
-    setTasks((prev) =>
-      prev.map((task) => (task.id === id ? { ...task, ...updates } : task))
-    );
+  const updateTask = async (id: string, updates: Partial<Task>) => {
+    if (!user) return;
+    const taskDoc = doc(db, "users", user.uid, "tasks", id);
+    await updateDoc(taskDoc, updates);
   };
   
-  const toggleTaskCompletion = (id: string) => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
+  const toggleTaskCompletion = async (id: string) => {
+    if (!user) return;
+    const taskToToggle = tasks.find(t => t.id === id);
+    if (taskToToggle) {
+        const taskDoc = doc(db, "users", user.uid, "tasks", id);
+        await updateDoc(taskDoc, { completed: !taskToToggle.completed });
+    }
   };
 
-  const addNote = (note: Omit<Note, "id" | "createdAt">) => {
-    const newNote: Note = {
-      ...note,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-    };
-    setNotes((prev) => [newNote, ...prev]);
+  const deleteTask = async (id: string) => {
+    if(!user) return;
+    await deleteDoc(doc(db, "users", user.uid, "tasks", id));
+  }
+
+  const addNote = async (note: Omit<Note, "id" | "createdAt">) => {
+    if (!user) return;
+    await addDoc(collection(db, "users", user.uid, "notes"), {
+        ...note,
+        createdAt: serverTimestamp(),
+    });
   };
   
-  const updateNote = (id: string, updates: Partial<Note>) => {
-    setNotes((prev) =>
-      prev.map((note) => (note.id === id ? { ...note, ...updates } : note))
-    );
+  const updateNote = async (id: string, updates: Partial<Note>) => {
+    if (!user) return;
+    const noteDoc = doc(db, "users", user.uid, "notes", id);
+    await updateDoc(noteDoc, updates);
   };
 
-  const deleteNote = (id: string) => {
-    setNotes((prev) => prev.filter((note) => note.id !== id));
+  const deleteNote = async (id: string) => {
+    if (!user) return;
+    await deleteDoc(doc(db, "users", user.uid, "notes", id));
   };
 
-  if (!isInitialized) {
+  if (user && !isInitialized) {
       return null;
   }
 
   return (
-    <AppContext.Provider value={{ tasks, notes, addTask, updateTask, toggleTaskCompletion, addNote, updateNote, deleteNote }}>
+    <AppContext.Provider value={{ tasks, notes, addTask, updateTask, toggleTaskCompletion, deleteTask, addNote, updateNote, deleteNote }}>
       {children}
     </AppContext.Provider>
   );
