@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -32,6 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 const taskFormSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters." }),
@@ -44,6 +46,8 @@ type TaskFormValues = z.infer<typeof taskFormSchema>;
 
 export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
   const { addTask } = useAppStore();
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
@@ -103,7 +107,7 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>Due Date</FormLabel>
-                <Popover>
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
@@ -126,7 +130,10 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
                     <Calendar
                       mode="single"
                       selected={field.value}
-                      onSelect={field.onChange}
+                      onSelect={(date) => {
+                        field.onChange(date);
+                        setIsCalendarOpen(false);
+                      }}
                       disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
                       initialFocus
                     />
