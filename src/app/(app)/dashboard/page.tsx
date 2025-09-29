@@ -3,7 +3,7 @@
 
 import { useAppStore } from "@/components/providers/app-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ListTodo, StickyNote, CheckCircle2 } from "lucide-react";
+import { ListTodo, StickyNote } from "lucide-react";
 import Link from "next/link";
 import { Task } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
@@ -69,7 +69,7 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-headline">Upcoming Tasks</CardTitle>
+            <div className="text-2xl font-headline">Upcoming Tasks</div>
           </CardHeader>
           <CardContent className="grid gap-2">
             {upcomingTasks.length > 0 ? (
@@ -81,7 +81,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-headline">Recent Notes</CardTitle>
+            <div className="text-2xl font-headline">Recent Notes</div>
           </CardHeader>
           <CardContent className="grid gap-4">
             {recentNotes.length > 0 ? (
