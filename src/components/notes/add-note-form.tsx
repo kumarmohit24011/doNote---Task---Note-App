@@ -24,7 +24,7 @@ const noteFormSchema = z.object({
 
 type NoteFormValues = z.infer<typeof noteFormSchema>;
 
-export function AddNoteForm({ onFinished }: { onFinished: () => void }) {
+export function AddNoteForm() {
   const { addNote } = useAppStore();
   const form = useForm<NoteFormValues>({
     resolver: zodResolver(noteFormSchema),
@@ -38,7 +38,7 @@ export function AddNoteForm({ onFinished }: { onFinished: () => void }) {
     try {
         await addNote(data);
         toast({ title: "Note created!", description: `A new note titled "${data.title}" has been saved.` });
-        onFinished();
+        form.reset();
     } catch (error) {
         toast({ title: "Error", description: "Could not create note. Please try again.", variant: "destructive" });
     }

@@ -1,42 +1,26 @@
 
 "use client";
 
-import { useState } from "react";
-import { PlusCircle } from "lucide-react";
 import { useAppStore } from "@/components/providers/app-provider";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { NoteCard } from "@/components/notes/note-card";
 import { AddNoteForm } from "@/components/notes/add-note-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function NotesPage() {
   const { notes } = useAppStore();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-bold font-headline">My Notes</h1>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button size="lg">
-              <PlusCircle className="mr-2 h-5 w-5" />
-              Add Note
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[520px]">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-headline">Add a new note</DialogTitle>
-            </DialogHeader>
-            <AddNoteForm onFinished={() => setIsDialogOpen(false)} />
-          </DialogContent>
-        </Dialog>
+    <div className="flex flex-col h-full gap-8">
+      <div>
+        <h1 className="text-4xl font-bold font-headline mb-8">My Notes</h1>
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-2xl font-headline">Add a new note</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <AddNoteForm />
+            </CardContent>
+        </Card>
       </div>
 
       {notes.length > 0 ? (
@@ -46,10 +30,10 @@ export default function NotesPage() {
           ))}
         </div>
       ) : (
-        <div className="flex-1 flex items-center justify-center text-center py-16 border-2 border-dashed rounded-lg mt-6 bg-card">
+        <div className="flex-1 flex items-center justify-center text-center py-16 border-2 border-dashed rounded-lg bg-card">
           <div>
             <h2 className="text-2xl font-semibold font-headline">No Notes Yet</h2>
-            <p className="text-muted-foreground mt-3 text-lg">Click "Add Note" to create your first note.</p>
+            <p className="text-muted-foreground mt-3 text-lg">Use the form above to create your first note.</p>
           </div>
         </div>
       )}
