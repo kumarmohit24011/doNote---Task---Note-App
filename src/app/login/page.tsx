@@ -43,6 +43,7 @@ export default function LoginPage() {
         // We deny access by signing them out and deleting the temporary account.
         const userToDelete = result.user;
         await auth.signOut();
+        // This delete operation requires the user to have been recently authenticated, which they were.
         await userToDelete.delete();
         
         toast({
@@ -51,8 +52,9 @@ export default function LoginPage() {
           variant: "destructive",
         });
       }
-      // If methods.length > 1, or the method isn't just "google.com", they existed before, so we allow them.
+      // If methods.length > 1, or the method isn't just "google.com" (e.g. 'password'), they existed before, so we allow them.
     } catch (error: any) {
+        // Don't show an error toast if the user simply closes the popup.
         if (error.code !== 'auth/popup-closed-by-user') {
             console.error("Error signing in with Google", error);
             toast({
