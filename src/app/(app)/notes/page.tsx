@@ -1,0 +1,56 @@
+"use client";
+
+import { useState } from "react";
+import { PlusCircle } from "lucide-react";
+import { useAppStore } from "@/components/providers/app-provider";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { NoteCard } from "@/components/notes/note-card";
+import { AddNoteForm } from "@/components/notes/add-note-form";
+
+export default function NotesPage() {
+  const { notes } = useAppStore();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  
+  const sortedNotes = [...notes].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  return (
+    <div className="container mx-auto py-4">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold font-headline">My Notes</h1>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Note
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add a new note</DialogTitle>
+            </DialogHeader>
+            <AddNoteForm onFinished={() => setIsDialogOpen(false)} />
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {sortedNotes.length > 0 ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {sortedNotes.map((note) => (
+            <NoteCard key={note.id} note={note} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 border-2 border-dashed rounded-lg mt-6">
+          <p className="text-muted-foreground">You haven't created any notes yet.</p>
+        </div>
+      )}
+    </div>
+  );
+}
