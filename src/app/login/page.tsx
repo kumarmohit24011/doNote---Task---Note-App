@@ -36,20 +36,22 @@ export default function LoginPage() {
       
       const methods = await fetchSignInMethodsForEmail(auth, email);
       
-      // This is a new user if there was only one sign-in method (the one just created).
-      if (methods.length <= 1 && methods[0] === "google.com") {
-        // This means the user doesn't exist in Firebase Auth yet, beyond this new temporary login.
-        // We can sign them out and show an error.
+      // If the only sign-in method is "google.com" and there's only one,
+      // it implies the user was just created.
+      if (methods.length === 1 && methods[0] === "google.com") {
+        // This is a new user who wasn't pre-registered.
+        // We deny access by signing them out and deleting the temporary account.
+        const userToDelete = result.user;
         await auth.signOut();
-        // also delete the user that was just created
-        await result.user.delete();
+        await userToDelete.delete();
+        
         toast({
-          title: "Sign-in failed",
-          description: "Your account is not authorized to access this application. Please contact the administrator.",
+          title: "Access Denied",
+          description: "This account is not authorized. Please contact the administrator.",
           variant: "destructive",
         });
       }
-      // If methods.length > 1, or the method isn't just Google, they existed before.
+      // If methods.length > 1, or the method isn't just "google.com", they existed before, so we allow them.
     } catch (error: any) {
         if (error.code !== 'auth/popup-closed-by-user') {
             console.error("Error signing in with Google", error);
