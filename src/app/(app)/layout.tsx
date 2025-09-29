@@ -125,7 +125,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <div className="flex h-20 items-center border-b px-8">
               <Link href="/" className="flex items-center gap-3 font-semibold text-primary">
                 <Activity className="h-7 w-7" />
-                <span className="text-2xl font-headline font-bold">FocusFlow</span>
+                <span className="text-2xl font-headline font-bold">doNote</span>
               </Link>
             </div>
             <div className="flex-1">
@@ -163,7 +163,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     className="flex items-center gap-3 text-lg font-semibold mb-4 text-primary"
                   >
                     <Activity className="h-7 w-7" />
-                    <span className="text-2xl font-headline font-bold">FocusFlow</span>
+                    <span className="text-2xl font-headline font-bold">doNote</span>
                   </Link>
                   {navItems.map((item) => (
                     <NavLink key={item.href} {...item} isMobile />

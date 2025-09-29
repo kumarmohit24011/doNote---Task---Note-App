@@ -1,7 +1,7 @@
 
 "use client";
 
-import { GoogleAuthProvider, signInWithPopup, fetchSignInMethodsForEmail, deleteUser, signOut } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, deleteUser, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -81,7 +81,7 @@ export default function LoginPage() {
         <CardHeader className="text-center">
             <div className="flex justify-center items-center gap-2 mb-4">
                 <Activity className="h-8 w-8 text-primary" />
-                <h1 className="text-3xl font-bold font-headline">FocusFlow</h1>
+                <h1 className="text-3xl font-bold font-headline">doNote</h1>
             </div>
           <CardTitle className="text-2xl">Welcome</CardTitle>
           <CardDescription>

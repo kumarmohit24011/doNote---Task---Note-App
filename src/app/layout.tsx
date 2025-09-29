@@ -20,8 +20,8 @@ const poppins = Poppins({
 
 
 export const metadata: Metadata = {
-  title: "FocusFlow",
-  description: "Manage your daily tasks and notes with FocusFlow.",
+  title: "doNote",
+  description: "Manage your daily tasks and notes with doNote.",
 };
 
 export default function RootLayout({
