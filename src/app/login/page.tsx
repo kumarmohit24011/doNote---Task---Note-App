@@ -1,7 +1,7 @@
 
 "use client";
 
-import { GoogleAuthProvider, signInWithPopup, fetchSignInMethodsForEmail, deleteUser } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, fetchSignInMethodsForEmail, deleteUser, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,12 +34,6 @@ export default function LoginPage() {
           throw new Error("Could not retrieve email from Google Sign-In.");
       }
       
-      // This is the crucial check. It fetches all sign-in methods for the email.
-      const methods = await fetchSignInMethodsForEmail(auth, email);
-      
-      // If the only sign-in method is "google.com", it means the user was just created by this sign-in attempt.
-      // A pre-existing user would either have more methods (e.g., 'password') or would have been created at an earlier time.
-      // The `getAdditionalUserInfo` check helps confirm if it's a new user in this session.
       const { getAdditionalUserInfo } = await import("firebase/auth");
       const additionalInfo = getAdditionalUserInfo(result);
 
@@ -109,5 +103,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
