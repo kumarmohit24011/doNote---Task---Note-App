@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { type ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 
@@ -48,11 +48,13 @@ function NavLink({
   icon: Icon,
   label,
   isMobile,
+  onClick
 }: {
   href: string;
   icon: React.ElementType;
   label: string;
   isMobile?: boolean;
+  onClick?: () => void;
 }) {
   const pathname = usePathname();
   const isActive = pathname === href;
@@ -60,6 +62,7 @@ function NavLink({
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={cn(
         "flex items-center gap-4 rounded-lg px-4 py-3 text-muted-foreground transition-all hover:text-primary hover:bg-primary/10",
         isActive && "bg-primary/10 text-primary font-semibold",
@@ -114,6 +117,7 @@ function UserMenu() {
 
 export default function AppLayout({ children }: { children: ReactNode }) {
     const { user } = useAuth();
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
 
     if (!user) return null;
     
@@ -139,7 +143,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
         <div className="flex flex-col bg-secondary/50">
           <header className="flex h-20 items-center gap-4 border-b bg-card px-6">
-            <Sheet>
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
@@ -166,7 +170,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     <span className="text-2xl font-headline font-bold">doNote</span>
                   </Link>
                   {navItems.map((item) => (
-                    <NavLink key={item.href} {...item} isMobile />
+                    <NavLink key={item.href} {...item} isMobile onClick={() => setIsSheetOpen(false)} />
                   ))}
                 </nav>
               </SheetContent>
