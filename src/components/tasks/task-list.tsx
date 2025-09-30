@@ -61,7 +61,7 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
       </TabsList>
       <TabsContent value="incomplete">
         {incompleteTasks.length > 0 && randomQuote && (
-             <div className="flex items-center gap-3 text-sm text-primary font-semibold bg-primary/10 p-3.5 rounded-lg mb-4 border border-primary/20">
+             <div className="flex items-center gap-3 text-base text-primary font-semibold bg-primary/10 p-3.5 rounded-lg mb-4 border border-primary/20">
                 <Target className="h-4 w-4 mt-0.5 flex-shrink-0" />
                 <p>
                     "{randomQuote.pre}<span className="text-destructive font-bold">{randomQuote.count}</span>{randomQuote.post}"
