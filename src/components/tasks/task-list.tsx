@@ -7,29 +7,36 @@ import { TaskItem } from "./task-item";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Lightbulb } from "lucide-react";
+import { Target } from "lucide-react";
 import { useState, useEffect } from "react";
 
-const quotes = [
-    "The secret of getting ahead is getting started.",
-    "A goal without a plan is just a wish.",
-    "The journey of a thousand miles begins with a single step.",
-    "Well begun is half done.",
-    "It does not matter how slowly you go as long as you do not stop.",
-    "Action is the foundational key to all success."
-];
+const getQuotes = (count: number) => {
+    if (count === 0) return [];
+    const quotes = [
+        `You have ${count} pending task${count > 1 ? 's' : ''}. Time to get to work!`,
+        `Don't give up, only ${count} task${count > 1 ? 's' : ''} left. You've got this!`,
+        `Just ${count} task${count > 1 ? 's' : ''} remaining. Do it now!`,
+        `Keep going! You're almost there, only ${count} task${count > 1 ? 's' : ''} to go.`,
+        `Tackle these ${count} task${count > 1 ? 's' : ''} and enjoy your day!`,
+        `What are you waiting for? ${count} task${count > 1 ? 's' : ''} await!`
+    ];
+    return quotes;
+};
 
 export function TaskList({ tasks }: { tasks: Task[] }) {
   const { toggleTaskCompletion, deleteTask } = useAppStore();
   const [randomQuote, setRandomQuote] = useState('');
-
-  useEffect(() => {
-    setRandomQuote(quotes[Math.floor(Math.random() * quotes.length)]);
-  }, []);
   
   const sortedTasks = [...tasks].sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
   const incompleteTasks = sortedTasks.filter((task) => !task.completed);
   const completedTasks = sortedTasks.filter((task) => task.completed);
+
+  useEffect(() => {
+    const quotes = getQuotes(incompleteTasks.length);
+    if (quotes.length > 0) {
+        setRandomQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+    }
+  }, [incompleteTasks.length]);
 
   const NoTasks = ({ title, description }: { title: string, description: string }) => (
     <div className="text-center py-10">
@@ -52,9 +59,9 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
       </TabsList>
       <TabsContent value="incomplete">
         {incompleteTasks.length > 0 && (
-             <div className="flex items-start gap-3 text-xs text-muted-foreground bg-card/80 p-3 rounded-lg mb-4 border">
-                <Lightbulb className="h-4 w-4 mt-0.5 flex-shrink-0 text-yellow-500" />
-                <p className="font-medium">"{randomQuote}"</p>
+             <div className="flex items-center gap-3 text-sm text-primary font-semibold bg-primary/10 p-3.5 rounded-lg mb-4 border border-primary/20">
+                <Target className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <p>"{randomQuote}"</p>
             </div>
         )}
         <Card>
