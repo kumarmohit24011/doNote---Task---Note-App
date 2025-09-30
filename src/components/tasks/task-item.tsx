@@ -35,9 +35,9 @@ export function TaskItem({
   onDelete: (id: string) => void;
 }) {
   const priorityStyles = {
-    high: "border-red-500/80 bg-red-500/10 text-red-700 dark:text-red-400",
-    medium: "border-yellow-500/80 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400",
-    low: "border-green-500/80 bg-green-500/10 text-green-700 dark:text-green-400",
+    high: "border-red-500/60 bg-red-500/10 text-red-600 dark:text-red-400",
+    medium: "border-yellow-500/60 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
+    low: "border-sky-500/60 bg-sky-500/10 text-sky-600 dark:text-sky-400",
   };
   
   const isOverdue = !task.completed && new Date(task.dueDate) < new Date(new Date().setHours(0,0,0,0));
@@ -45,24 +45,24 @@ export function TaskItem({
   return (
     <div
       className={cn(
-        "rounded-lg border bg-card/80 dark:bg-card p-3 transition-all animate-in fade-in-0 duration-300",
+        "rounded-lg border bg-card/80 dark:bg-card p-2.5 transition-all animate-in fade-in-0 duration-300",
         task.completed ? "bg-muted/60" : "hover:bg-card"
       )}
     >
       <Collapsible>
-        <div className="flex items-start gap-3.5">
+        <div className="flex items-start gap-3">
           <Checkbox
             id={`task-${task.id}`}
             checked={task.completed}
             onCheckedChange={() => onToggleCompletion(task.id)}
-            className="mt-0.5 h-4 w-4"
+            className="mt-0.5"
             aria-label={`Mark task ${task.title} as ${task.completed ? 'incomplete' : 'complete'}`}
           />
-          <div className="flex-grow grid gap-1.5">
+          <div className="flex-grow grid gap-1">
             <label
               htmlFor={`task-${task.id}`}
               className={cn(
-                "font-medium text-sm leading-none cursor-pointer",
+                "font-medium text-xs leading-none cursor-pointer",
                 task.completed && "line-through text-muted-foreground"
               )}
             >
@@ -86,21 +86,21 @@ export function TaskItem({
           <div className="flex items-center gap-0.5 -mt-1 -mr-1">
             {task.description && (
               <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Toggle task description">
+                <Button variant="ghost" size="icon" className="h-7 w-7" aria-label="Toggle task description">
                   <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
                 </Button>
               </CollapsibleTrigger>
             )}
              <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
-                    <Trash2 className="h-4 w-4" />
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive">
+                    <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="text-xl font-bold font-headline">Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription className="text-base">
+                  <AlertDialogTitle className="text-base font-bold font-headline">Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription className="text-xs">
                     This will permanently delete the task: "{task.title}".
                   </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -116,7 +116,7 @@ export function TaskItem({
         </div>
         {task.description && (
           <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-            <p className="text-sm text-muted-foreground mt-3 pt-3 border-t pl-8">
+            <p className="text-xs text-muted-foreground mt-2 pt-2 border-t pl-7">
               {task.description}
             </p>
           </CollapsibleContent>

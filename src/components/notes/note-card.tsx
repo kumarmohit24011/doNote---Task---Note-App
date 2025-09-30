@@ -46,6 +46,7 @@ import {
     FormItem,
     FormMessage,
   } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
 
 const noteEditSchema = z.object({
     title: z.string().min(3, { message: "Title must be at least 3 characters." }),
@@ -54,8 +55,15 @@ const noteEditSchema = z.object({
 
 type NoteEditValues = z.infer<typeof noteEditSchema>;
 
+const noteColors = [
+    "border-t-blue-400",
+    "border-t-purple-400",
+    "border-t-pink-400",
+    "border-t-orange-400",
+    "border-t-teal-400",
+];
 
-export function NoteCard({ note }: { note: Note }) {
+export function NoteCard({ note, index }: { note: Note, index: number }) {
   const { updateNote, deleteNote } = useAppStore();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -86,9 +94,11 @@ export function NoteCard({ note }: { note: Note }) {
     }
   }
 
+  const cardColorClass = noteColors[index % noteColors.length];
+
   if (isEditing) {
     return (
-        <Card className="flex flex-col animate-in fade-in-0 zoom-in-95 duration-300">
+        <Card className={cn("flex flex-col animate-in fade-in-0 zoom-in-95 duration-300 border-t-4", cardColorClass)}>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onEditSubmit)} className="flex flex-col h-full">
                     <CardHeader>
@@ -98,7 +108,7 @@ export function NoteCard({ note }: { note: Note }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input placeholder="Note title" {...field} className="text-base font-bold font-headline p-0 border-0 shadow-none focus-visible:ring-0"/>
+                                        <Input placeholder="Note title" {...field} className="text-sm font-bold font-headline p-0 border-0 shadow-none focus-visible:ring-0"/>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -119,12 +129,12 @@ export function NoteCard({ note }: { note: Note }) {
                             )}
                         />
                     </CardContent>
-                    <CardFooter className="flex justify-end gap-2 p-3">
+                    <CardFooter className="flex justify-end gap-2 p-2">
                         <Button type="button" variant="ghost" size="sm" onClick={() => setIsEditing(false)}>
-                            <X className="mr-1 h-3.5 w-3.5" /> Cancel
+                            <X className="mr-1 h-3 w-3" /> Cancel
                         </Button>
                         <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-                            <Save className="mr-1 h-3.5 w-3.5" /> Save
+                            <Save className="mr-1 h-3 w-3" /> Save
                         </Button>
                     </CardFooter>
                 </form>
@@ -134,19 +144,19 @@ export function NoteCard({ note }: { note: Note }) {
   }
 
   return (
-    <Card className="flex flex-col animate-in fade-in-0 zoom-in-95 duration-500 hover:shadow-lg transition-shadow bg-card/80 dark:bg-card">
-      <CardHeader className="pb-2">
+    <Card className={cn("flex flex-col animate-in fade-in-0 zoom-in-95 duration-500 hover:shadow-lg transition-shadow bg-card/80 dark:bg-card border-t-4", cardColorClass)}>
+      <CardHeader className="pb-2 pt-3">
         <div className="flex justify-between items-start">
-            <CardTitle className="pr-2 text-sm font-headline">{note.title}</CardTitle>
+            <CardTitle className="pr-2 text-xs font-headline">{note.title}</CardTitle>
             <AlertDialog>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 -mt-1.5 -mr-2 flex-shrink-0 text-muted-foreground hover:text-foreground">
-                    <MoreVertical className="h-4 w-4" />
+                  <Button variant="ghost" size="icon" className="h-6 w-6 -mt-1 -mr-2 flex-shrink-0 text-muted-foreground hover:text-foreground">
+                    <MoreVertical className="h-3.5 w-3.5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => { form.reset(); setIsEditing(true); }}>
+                  <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => { form.reset({ title: note.title, content: note.content }); setIsEditing(true); }}>
                       <Pencil className="mr-2 h-3 w-3" />
                       Edit
                   </DropdownMenuItem>
@@ -161,8 +171,8 @@ export function NoteCard({ note }: { note: Note }) {
               </DropdownMenu>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="text-lg font-headline">Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription className="text-sm">
+                  <AlertDialogTitle className="text-base font-headline">Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription className="text-xs">
                     This action cannot be undone. This will permanently delete your note titled "{note.title}".
                   </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -177,7 +187,7 @@ export function NoteCard({ note }: { note: Note }) {
         </div>
         {note.createdAt && (
           <CardDescription className="text-xs">
-            {format(new Date(note.createdAt), "MMMM d, yyyy")}
+            {format(new Date(note.createdAt), "MMM d, yyyy")}
           </CardDescription>
         )}
       </CardHeader>

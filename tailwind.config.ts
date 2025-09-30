@@ -1,4 +1,5 @@
 import type {Config} from 'tailwindcss';
+import { violet, teal, sky, orange, pink } from 'tailwindcss/colors';
 
 export default {
   darkMode: ['class'],
@@ -21,6 +22,11 @@ export default {
         headline: ["var(--font-headline)", "sans-serif"],
       },
       colors: {
+        violet,
+        teal,
+        sky,
+        orange,
+        pink,
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
