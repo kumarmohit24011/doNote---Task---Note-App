@@ -190,7 +190,10 @@ export default function DashboardPage() {
             <Flame className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{streak}</div>
+            <div className="text-2xl font-bold flex items-center gap-2">
+              <span>{streak}</span>
+              <Flame className="h-6 w-6 text-orange-500" />
+            </div>
             <p className="text-xs text-muted-foreground">day completion streak</p>
           </CardContent>
         </Card>
@@ -212,3 +215,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
