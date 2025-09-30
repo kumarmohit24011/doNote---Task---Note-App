@@ -3,7 +3,7 @@
 
 import { useAppStore } from "@/components/providers/app-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ListTodo, StickyNote } from "lucide-react";
+import { ListTodo, StickyNote, Quote } from "lucide-react";
 import Link from "next/link";
 import { Task } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
@@ -44,7 +44,21 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-2 gap-6">
+      <Card className="bg-gradient-to-r from-primary/10 to-primary/20 border-primary/20">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-4">
+            <Quote className="h-6 w-6 text-primary" />
+            <div>
+              <blockquote className="text-sm font-semibold text-primary-foreground">
+                "The secret of getting ahead is getting started."
+              </blockquote>
+              <p className="text-xs text-primary/80 mt-1">- Mark Twain</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Open Tasks</CardTitle>
