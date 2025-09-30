@@ -32,7 +32,7 @@ export default function TasksPage() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[520px]">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-headline">Add a new task</DialogTitle>
+              <DialogTitle className="text-2xl font-bold font-headline">Add a new task</DialogTitle>
             </DialogHeader>
             <AddTaskForm onFinished={() => setIsDialogOpen(false)} />
           </DialogContent>

@@ -69,7 +69,7 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <div className="text-2xl font-headline">Upcoming Tasks</div>
+            <div className="text-2xl font-bold font-headline">Upcoming Tasks</div>
           </CardHeader>
           <CardContent className="grid gap-2">
             {upcomingTasks.length > 0 ? (
@@ -81,7 +81,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader>
-            <div className="text-2xl font-headline">Recent Notes</div>
+            <div className="text-2xl font-bold font-headline">Recent Notes</div>
           </CardHeader>
           <CardContent className="grid gap-4">
             {recentNotes.length > 0 ? (

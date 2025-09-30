@@ -99,7 +99,7 @@ export function TaskItem({
                 </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogTitle className="text-2xl font-bold font-headline">Are you sure?</AlertDialogTitle>
                   <AlertDialogDescription className="text-lg">
                     This will permanently delete the task: "{task.title}".
                   </AlertDialogDescription>

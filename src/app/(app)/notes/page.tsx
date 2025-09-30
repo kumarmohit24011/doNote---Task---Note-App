@@ -15,7 +15,7 @@ export default function NotesPage() {
         <h1 className="text-4xl font-bold font-headline mb-8">My Notes</h1>
         <Card>
             <CardHeader>
-                <CardTitle className="text-2xl font-headline">Add a new note</CardTitle>
+                <CardTitle className="text-2xl font-bold font-headline">Add a new note</CardTitle>
             </CardHeader>
             <CardContent>
                 <AddNoteForm />
