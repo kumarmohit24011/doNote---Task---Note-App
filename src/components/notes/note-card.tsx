@@ -34,6 +34,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
@@ -97,7 +98,7 @@ export function NoteCard({ note }: { note: Note }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input placeholder="Note title" {...field} className="text-lg font-bold font-headline p-0 border-0 shadow-none focus-visible:ring-0"/>
+                                        <Input placeholder="Note title" {...field} className="text-base font-bold font-headline p-0 border-0 shadow-none focus-visible:ring-0"/>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -111,19 +112,19 @@ export function NoteCard({ note }: { note: Note }) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Textarea placeholder="Jot down your thoughts..." {...field} className="text-sm min-h-[100px] p-0 border-0 shadow-none focus-visible:ring-0" />
+                                        <Textarea placeholder="Jot down your thoughts..." {...field} className="text-xs min-h-[100px] p-0 border-0 shadow-none focus-visible:ring-0" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
                     </CardContent>
-                    <CardFooter className="flex justify-end gap-2 p-4">
+                    <CardFooter className="flex justify-end gap-2 p-3">
                         <Button type="button" variant="ghost" size="sm" onClick={() => setIsEditing(false)}>
-                            <X className="mr-1.5" /> Cancel
+                            <X className="mr-1 h-3.5 w-3.5" /> Cancel
                         </Button>
                         <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-                            <Save className="mr-1.5" /> Save
+                            <Save className="mr-1 h-3.5 w-3.5" /> Save
                         </Button>
                     </CardFooter>
                 </form>
@@ -134,25 +135,25 @@ export function NoteCard({ note }: { note: Note }) {
 
   return (
     <Card className="flex flex-col animate-in fade-in-0 zoom-in-95 duration-500 hover:shadow-lg transition-shadow bg-card/80 dark:bg-card">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
-            <CardTitle className="pr-2 text-base font-headline">{note.title}</CardTitle>
+            <CardTitle className="pr-2 text-sm font-headline">{note.title}</CardTitle>
             <AlertDialog>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 -mt-1 -mr-2 flex-shrink-0 text-muted-foreground hover:text-foreground">
+                  <Button variant="ghost" size="icon" className="h-7 w-7 -mt-1.5 -mr-2 flex-shrink-0 text-muted-foreground hover:text-foreground">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem className="cursor-pointer text-sm" onClick={() => { form.reset(); setIsEditing(true); }}>
-                      <Pencil className="mr-2 h-3.5 w-3.5" />
+                  <DropdownMenuItem className="cursor-pointer text-xs" onClick={() => { form.reset(); setIsEditing(true); }}>
+                      <Pencil className="mr-2 h-3 w-3" />
                       Edit
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <AlertDialogTrigger asChild>
-                    <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer text-sm">
-                      <Trash2 className="mr-2 h-3.5 w-3.5" />
+                    <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer text-xs">
+                      <Trash2 className="mr-2 h-3 w-3" />
                       Delete
                     </DropdownMenuItem>
                   </AlertDialogTrigger>
@@ -160,8 +161,8 @@ export function NoteCard({ note }: { note: Note }) {
               </DropdownMenu>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="text-xl font-headline">Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription className="text-base">
+                  <AlertDialogTitle className="text-lg font-headline">Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription className="text-sm">
                     This action cannot be undone. This will permanently delete your note titled "{note.title}".
                   </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -180,8 +181,8 @@ export function NoteCard({ note }: { note: Note }) {
           </CardDescription>
         )}
       </CardHeader>
-      <CardContent className="flex-grow pt-0 pb-4">
-        <p className="text-sm text-muted-foreground whitespace-pre-wrap line-clamp-[6]">
+      <CardContent className="flex-grow pt-0 pb-3">
+        <p className="text-xs text-muted-foreground whitespace-pre-wrap line-clamp-[6]">
           {note.content}
         </p>
       </CardContent>
