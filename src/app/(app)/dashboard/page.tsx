@@ -43,35 +43,35 @@ export default function DashboardPage() {
   const openTasks = tasks.filter(task => !task.completed);
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid gap-6 md:grid-cols-2">
+    <div className="flex flex-col gap-6 md:gap-8">
+      <div className="grid gap-4 md:gap-6 md:grid-cols-2">
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg font-medium">Open Tasks</CardTitle>
-            <ListTodo className="h-6 w-6 text-muted-foreground" />
+            <CardTitle className="text-base md:text-lg font-medium">Open Tasks</CardTitle>
+            <ListTodo className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold">{openTasks.length}</div>
-            <p className="text-md text-muted-foreground">tasks to be completed</p>
+          <CardContent className="p-4 md:p-6 pt-0">
+            <div className="text-3xl md:text-4xl font-bold">{openTasks.length}</div>
+            <p className="text-sm md:text-md text-muted-foreground">tasks to be completed</p>
           </CardContent>
         </Card>
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg font-medium">Total Notes</CardTitle>
-            <StickyNote className="h-6 w-6 text-muted-foreground" />
+            <CardTitle className="text-base md:text-lg font-medium">Total Notes</CardTitle>
+            <StickyNote className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold">{notes.length}</div>
-            <p className="text-md text-muted-foreground">notes created</p>
+          <CardContent className="p-4 md:p-6 pt-0">
+            <div className="text-3xl md:text-4xl font-bold">{notes.length}</div>
+            <p className="text-sm md:text-md text-muted-foreground">notes created</p>
           </CardContent>
         </Card>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <div className="text-2xl font-bold font-headline">Upcoming Tasks</div>
+            <div className="text-xl md:text-2xl font-bold font-headline">Upcoming Tasks</div>
           </CardHeader>
-          <CardContent className="grid gap-2">
+          <CardContent className="grid gap-2 p-4 md:p-6 pt-0">
             {upcomingTasks.length > 0 ? (
               upcomingTasks.map((task) => <RecentTaskItem key={task.id} task={task} />)
             ) : (
@@ -81,9 +81,9 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader>
-            <div className="text-2xl font-bold font-headline">Recent Notes</div>
+            <div className="text-xl md:text-2xl font-bold font-headline">Recent Notes</div>
           </CardHeader>
-          <CardContent className="grid gap-4">
+          <CardContent className="grid gap-4 p-4 md:p-6 pt-0">
             {recentNotes.length > 0 ? (
               recentNotes.map((note) => (
                 <div key={note.id} className="grid gap-1.5 p-3 rounded-lg hover:bg-secondary transition-colors">
