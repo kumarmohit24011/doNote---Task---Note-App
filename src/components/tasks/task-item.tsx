@@ -1,7 +1,7 @@
 
 "use client";
 
-import { format } from "date-fns";
+import { format, isToday } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Task } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, Trash2 } from "lucide-react";
+import { ChevronDown, Trash2, Frown, Meh } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   AlertDialog,
@@ -24,6 +24,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 
 export function TaskItem({
   task,
@@ -40,7 +47,9 @@ export function TaskItem({
     low: "border-sky-500/60 bg-sky-500/10 text-sky-600 dark:text-sky-400",
   };
   
-  const isOverdue = !task.completed && new Date(task.dueDate) < new Date(new Date().setHours(0,0,0,0));
+  const dueDate = new Date(task.dueDate);
+  const isTaskOverdue = !task.completed && dueDate < new Date(new Date().setHours(0,0,0,0));
+  const isDueToday = !task.completed && isToday(dueDate);
 
   return (
     <div
@@ -75,12 +84,27 @@ export function TaskItem({
               >
                 {task.priority}
               </Badge>
-              <span className={cn(
-                "text-xs text-muted-foreground",
-                isOverdue && "text-destructive font-semibold"
-              )}>
-                {format(new Date(task.dueDate), "MMM d, yyyy")}
-              </span>
+              <div className="flex items-center gap-1">
+                {(isTaskOverdue || isDueToday) && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        {isTaskOverdue && <Frown className="h-3.5 w-3.5 text-destructive" />}
+                        {isDueToday && <Meh className="h-3.5 w-3.5 text-yellow-600" />}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-xs">{isTaskOverdue ? "This task is overdue!" : "This task is due today."}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+                <span className={cn(
+                  "text-xs text-muted-foreground",
+                  isTaskOverdue && "text-destructive font-semibold"
+                )}>
+                  {format(dueDate, "MMM d, yyyy")}
+                </span>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-0.5 -mt-1 -mr-1">

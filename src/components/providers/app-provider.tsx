@@ -17,6 +17,8 @@ import {
 import type { Task, Note } from "@/lib/types";
 import { useAuth } from "./auth-provider";
 import { app } from "@/lib/firebase";
+import { toast } from "@/hooks/use-toast";
+import { PartyPopper } from "lucide-react";
 
 interface AppStore {
   tasks: Task[];
@@ -92,8 +94,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!user) return;
     const taskToToggle = tasks.find((t) => t.id === id);
     if (taskToToggle) {
+      const newCompletedState = !taskToToggle.completed;
       const taskRef = ref(db, `users/${user.uid}/tasks/${id}`);
-      await update(taskRef, { completed: !taskToToggle.completed });
+      await update(taskRef, { completed: newCompletedState });
+
+      if (newCompletedState) {
+        toast({
+          title: "Great job!",
+          description: (
+            <div className="flex items-center gap-2">
+              <PartyPopper className="h-5 w-5 text-yellow-400" />
+              <span className="font-semibold">You completed a task!</span>
+            </div>
+          )
+        });
+      }
     }
   };
 
