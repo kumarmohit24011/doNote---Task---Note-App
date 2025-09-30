@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { format, subDays, isAfter, parseISO } from "date-fns";
+import { format, subDays, isSameDay, parseISO } from "date-fns";
 import { useAppStore } from "@/components/providers/app-provider";
 import {
   ChartConfig,
@@ -34,7 +34,7 @@ export function TaskProgressChart() {
             if (!task.completedAt) return false;
             // Firebase server timestamp can be a number, handle this case.
             const completedDate = typeof task.completedAt === 'number' ? new Date(task.completedAt) : parseISO(task.completedAt as unknown as string);
-            return format(day, 'yyyy-MM-dd') === format(completedDate, 'yyyy-MM-dd');
+            return isSameDay(day, completedDate);
         }).length;
         
         return {
@@ -51,7 +51,7 @@ export function TaskProgressChart() {
         Tasks completed over the last 7 days.
       </CardDescription>
       <ChartContainer config={chartConfig}>
-        <BarChart accessibilityLayer data={chartData} margin={{ top: 5, right: 10, left: -10, bottom: -10 }}>
+        <BarChart accessibilityLayer data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
           <CartesianGrid vertical={false} strokeDasharray="3 3" />
           <XAxis
             dataKey="shortDate"
