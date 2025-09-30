@@ -13,19 +13,19 @@ import { useState, useEffect } from "react";
 const getQuotes = (count: number) => {
     if (count === 0) return [];
     const quotes = [
-        `You have ${count} pending task${count > 1 ? 's' : ''}. Time to get to work!`,
-        `Don't give up, only ${count} task${count > 1 ? 's' : ''} left. You've got this!`,
-        `Just ${count} task${count > 1 ? 's' : ''} remaining. Do it now!`,
-        `Keep going! You're almost there, only ${count} task${count > 1 ? 's' : ''} to go.`,
-        `Tackle these ${count} task${count > 1 ? 's' : ''} and enjoy your day!`,
-        `What are you waiting for? ${count} task${count > 1 ? 's' : ''} await!`
+        { pre: "You have ", count, post: ` pending task${count > 1 ? 's' : ''}. Time to get to work!` },
+        { pre: "Don't give up, only ", count, post: ` task${count > 1 ? 's' : ''} left. You've got this!` },
+        { pre: "Just ", count, post: ` task${count > 1 ? 's' : ''} remaining. Do it now!` },
+        { pre: "Keep going! You're almost there, only ", count, post: ` task${count > 1 ? 's' : ''} to go.` },
+        { pre: "Tackle these ", count, post: ` task${count > 1 ? 's' : ''} and enjoy your day!` },
+        { pre: "What are you waiting for? ", count, post: ` task${count > 1 ? 's' : ''} await!` }
     ];
     return quotes;
 };
 
 export function TaskList({ tasks }: { tasks: Task[] }) {
   const { toggleTaskCompletion, deleteTask } = useAppStore();
-  const [randomQuote, setRandomQuote] = useState('');
+  const [randomQuote, setRandomQuote] = useState<{pre: string, count: number, post: string} | null>(null);
   
   const sortedTasks = [...tasks].sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
   const incompleteTasks = sortedTasks.filter((task) => !task.completed);
@@ -35,6 +35,8 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
     const quotes = getQuotes(incompleteTasks.length);
     if (quotes.length > 0) {
         setRandomQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+    } else {
+        setRandomQuote(null);
     }
   }, [incompleteTasks.length]);
 
@@ -58,10 +60,12 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="incomplete">
-        {incompleteTasks.length > 0 && (
+        {incompleteTasks.length > 0 && randomQuote && (
              <div className="flex items-center gap-3 text-sm text-primary font-semibold bg-primary/10 p-3.5 rounded-lg mb-4 border border-primary/20">
                 <Target className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <p>"{randomQuote}"</p>
+                <p>
+                    "{randomQuote.pre}<span className="text-destructive font-bold">{randomQuote.count}</span>{randomQuote.post}"
+                </p>
             </div>
         )}
         <Card>
