@@ -7,9 +7,25 @@ import { TaskItem } from "./task-item";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Lightbulb } from "lucide-react";
+import { useState, useEffect } from "react";
+
+const quotes = [
+    "The secret of getting ahead is getting started.",
+    "A goal without a plan is just a wish.",
+    "The journey of a thousand miles begins with a single step.",
+    "Well begun is half done.",
+    "It does not matter how slowly you go as long as you do not stop.",
+    "Action is the foundational key to all success."
+];
 
 export function TaskList({ tasks }: { tasks: Task[] }) {
   const { toggleTaskCompletion, deleteTask } = useAppStore();
+  const [randomQuote, setRandomQuote] = useState('');
+
+  useEffect(() => {
+    setRandomQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+  }, []);
   
   const sortedTasks = [...tasks].sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
   const incompleteTasks = sortedTasks.filter((task) => !task.completed);
@@ -35,6 +51,12 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="incomplete">
+        {incompleteTasks.length > 0 && (
+             <div className="flex items-start gap-3 text-xs text-muted-foreground bg-card/80 p-3 rounded-lg mb-4 border">
+                <Lightbulb className="h-4 w-4 mt-0.5 flex-shrink-0 text-yellow-500" />
+                <p className="font-medium">"{randomQuote}"</p>
+            </div>
+        )}
         <Card>
           <CardContent className="p-2 md:p-3">
             <div className="space-y-3">
