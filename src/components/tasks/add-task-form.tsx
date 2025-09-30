@@ -64,7 +64,7 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
         dueDate: format(data.dueDate, "yyyy-MM-dd"),
         description: data.description || "",
       });
-      toast({ title: "Task added!", description: `"${data.title}" has been added to your list.` });
+      toast({ title: "Task added!", description: "Another one down, you've got this!" });
       onFinished();
     } catch (error) {
       toast({ title: "Error", description: "Could not add task. Please try again.", variant: "destructive" });

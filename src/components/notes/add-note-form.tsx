@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -37,7 +38,7 @@ export function AddNoteForm({ onFinished }: { onFinished?: () => void }) {
   async function onSubmit(data: NoteFormValues) {
     try {
         await addNote(data);
-        toast({ title: "Note created!", description: `A new note titled "${data.title}" has been saved.` });
+        toast({ title: "Note created!", description: "Great ideas start here." });
         form.reset();
         onFinished?.();
     } catch (error) {

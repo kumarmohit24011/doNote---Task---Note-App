@@ -17,6 +17,7 @@ import {
 import type { Task, Note } from "@/lib/types";
 import { useAuth } from "./auth-provider";
 import { app } from "@/lib/firebase";
+import { toast } from "@/hooks/use-toast";
 
 interface AppStore {
   tasks: Task[];
@@ -101,6 +102,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       if (newCompletedState) {
         setShowConfetti(true);
+        toast({ title: "Great job!", description: `You've completed "${taskToToggle.title}".` });
       }
     }
   };
