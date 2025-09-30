@@ -3,7 +3,7 @@
 
 import { useAppStore } from "@/components/providers/app-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ListTodo, StickyNote, Quote } from "lucide-react";
+import { ListTodo, StickyNote, Quote, Flame } from "lucide-react";
 import Link from "next/link";
 import { Task } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
@@ -139,7 +139,7 @@ function RecentTaskItem({ task }: { task: Task }) {
 }
 
 export default function DashboardPage() {
-  const { tasks, notes } = useAppStore();
+  const { tasks, notes, streak } = useAppStore();
   const [randomQuote, setRandomQuote] = useState<{ text: string; author: string } | null>(null);
 
   useEffect(() => {
@@ -175,7 +175,7 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Open Tasks</CardTitle>
@@ -194,6 +194,16 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">{notes.length}</div>
             <p className="text-xs text-muted-foreground">notes created</p>
+          </CardContent>
+        </Card>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Current Streak</CardTitle>
+            <Flame className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{streak}</div>
+            <p className="text-xs text-muted-foreground">day completion streak</p>
           </CardContent>
         </Card>
       </div>

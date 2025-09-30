@@ -17,3 +17,8 @@ export interface Note {
   content: string;
   createdAt: number; // RTDB timestamp
 }
+
+export interface UserData {
+  streak: number;
+  lastCompletedDate: string; // ISO String
+}

@@ -13,14 +13,17 @@ import {
   serverTimestamp,
   query,
   orderByChild,
+  runTransaction,
 } from "firebase/database";
-import type { Task, Note } from "@/lib/types";
+import type { Task, Note, UserData } from "@/lib/types";
 import { useAuth } from "./auth-provider";
 import { app } from "@/lib/firebase";
+import { isSameDay, startOfYesterday } from 'date-fns';
 
 interface AppStore {
   tasks: Task[];
   notes: Note[];
+  streak: number;
   showConfetti: boolean;
   completionMessage: string;
   addTask: (task: Omit<Task, "id" | "completed" | "createdAt">) => Promise<void>;
@@ -40,6 +43,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [streak, setStreak] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [completionMessage, setCompletionMessage] = useState("");
@@ -47,6 +51,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (user) {
+      const userDataRef = ref(db, `users/${user.uid}/userData`);
+      const unsubscribeUserData = onValue(userDataRef, (snapshot) => {
+        const userData: UserData = snapshot.val();
+        if (userData) {
+          // Check if the streak should be reset
+          const today = new Date();
+          const lastCompleted = userData.lastCompletedDate ? new Date(userData.lastCompletedDate) : null;
+          if (lastCompleted && !isSameDay(today, lastCompleted) && lastCompleted < startOfYesterday()) {
+            // It's been more than a day, reset streak
+            update(userDataRef, { streak: 0 });
+            setStreak(0);
+          } else {
+            setStreak(userData.streak || 0);
+          }
+        }
+      });
+      
       const tasksRef = query(ref(db, `users/${user.uid}/tasks`), orderByChild('createdAt'));
       const unsubscribeTasks = onValue(tasksRef, (snapshot) => {
         const tasksData: Task[] = [];
@@ -70,10 +91,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       return () => {
         unsubscribeTasks();
         unsubscribeNotes();
+        unsubscribeUserData();
       };
     } else {
       setTasks([]);
       setNotes([]);
+      setStreak(0);
       setIsInitialized(false);
     }
   }, [user, db]);
@@ -107,6 +130,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (newCompletedState) {
         setShowConfetti(true);
         setCompletionMessage("Great Job!");
+
+        // Update streak
+        const userDataRef = ref(db, `users/${user.uid}/userData`);
+        runTransaction(userDataRef, (currentData: UserData | null) => {
+          if (currentData) {
+            const today = new Date();
+            const lastCompleted = currentData.lastCompletedDate ? new Date(currentData.lastCompletedDate) : null;
+            if (!lastCompleted || !isSameDay(today, lastCompleted)) {
+                // If last completion was yesterday, increment streak, otherwise start from 1
+                const newStreak = (lastCompleted && isSameDay(lastCompleted, startOfYesterday())) ? (currentData.streak || 0) + 1 : 1;
+                currentData.streak = newStreak;
+                currentData.lastCompletedDate = today.toISOString();
+            }
+          } else {
+            // No previous data, start a new streak
+            return { streak: 1, lastCompletedDate: new Date().toISOString() };
+          }
+          return currentData;
+        });
+
       }
     }
   };
@@ -147,6 +190,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       value={{
         tasks,
         notes,
+        streak,
         showConfetti,
         completionMessage,
         setShowConfetti,
