@@ -9,6 +9,7 @@ export interface Task {
   priority: Priority;
   completed: boolean;
   createdAt: number; // RTDB timestamp
+  completedAt?: number | null; // RTDB timestamp
 }
 
 export interface Note {

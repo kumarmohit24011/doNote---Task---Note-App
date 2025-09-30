@@ -9,6 +9,7 @@ import { Task } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
+import { TaskProgressChart } from "@/components/dashboard/task-progress-chart";
 
 const quotes = [
   { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
@@ -198,6 +199,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
       <div className="grid gap-6">
         <Card>
           <CardHeader>
@@ -211,9 +213,16 @@ export default function DashboardPage() {
             )}
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg font-bold font-headline">Task Progress</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TaskProgressChart />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 }
-
-    

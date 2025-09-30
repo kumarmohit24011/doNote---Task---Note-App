@@ -26,7 +26,7 @@ interface AppStore {
   streak: number;
   showConfetti: boolean;
   completionMessage: string;
-  addTask: (task: Omit<Task, "id" | "completed" | "createdAt">) => Promise<void>;
+  addTask: (task: Omit<Task, "id" | "completed" | "createdAt" | "completedAt">) => Promise<void>;
   updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
   toggleTaskCompletion: (id: string) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
@@ -101,13 +101,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [user, db]);
 
-  const addTask = async (task: Omit<Task, "id" | "completed" | "createdAt">) => {
+  const addTask = async (task: Omit<Task, "id" | "completed" | "createdAt" | "completedAt">) => {
     if (!user) return;
     const tasksRef = ref(db, `users/${user.uid}/tasks`);
     await push(tasksRef, {
       ...task,
       completed: false,
       createdAt: serverTimestamp(),
+      completedAt: null,
     });
     setCompletionMessage("Task Added!");
     setShowConfetti(true);
@@ -125,7 +126,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (taskToToggle) {
       const newCompletedState = !taskToToggle.completed;
       const taskRef = ref(db, `users/${user.uid}/tasks/${id}`);
-      await update(taskRef, { completed: newCompletedState });
+      const updates: Partial<Task> = { 
+        completed: newCompletedState,
+        completedAt: newCompletedState ? serverTimestamp() : null,
+      };
+      await update(taskRef, updates);
 
       if (newCompletedState) {
         setShowConfetti(true);
@@ -141,7 +146,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 // If last completion was yesterday, increment streak, otherwise start from 1
                 const newStreak = (lastCompleted && isSameDay(lastCompleted, startOfYesterday())) ? (currentData.streak || 0) + 1 : 1;
                 currentData.streak = newStreak;
-                currentData.lastCompletedDate = today.toISOString();
+                current_data.lastCompletedDate = today.toISOString();
             }
           } else {
             // No previous data, start a new streak
