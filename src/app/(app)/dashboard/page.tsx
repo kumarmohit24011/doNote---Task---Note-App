@@ -44,7 +44,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
-      <div className="grid gap-4 md:gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-2 gap-4 md:gap-6">
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-base md:text-lg font-medium">Open Tasks</CardTitle>
