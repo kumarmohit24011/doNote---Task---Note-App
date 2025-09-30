@@ -17,12 +17,11 @@ import {
 import type { Task, Note } from "@/lib/types";
 import { useAuth } from "./auth-provider";
 import { app } from "@/lib/firebase";
-import { toast } from "@/hooks/use-toast";
-import { PartyPopper } from "lucide-react";
 
 interface AppStore {
   tasks: Task[];
   notes: Note[];
+  showConfetti: boolean;
   addTask: (task: Omit<Task, "id" | "completed" | "createdAt">) => Promise<void>;
   updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
   toggleTaskCompletion: (id: string) => Promise<void>;
@@ -30,6 +29,7 @@ interface AppStore {
   addNote: (note: Omit<Note, "id" | "createdAt">) => Promise<void>;
   updateNote: (id: string, updates: Partial<Note>) => Promise<void>;
   deleteNote: (id: string) => Promise<void>;
+  setShowConfetti: (show: boolean) => void;
 }
 
 const AppContext = createContext<AppStore | null>(null);
@@ -39,6 +39,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   const db = getDatabase(app);
 
   useEffect(() => {
@@ -99,15 +100,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       await update(taskRef, { completed: newCompletedState });
 
       if (newCompletedState) {
-        toast({
-          title: "Great job!",
-          description: (
-            <div className="flex items-center gap-2">
-              <PartyPopper className="h-5 w-5 text-yellow-400" />
-              <span className="font-semibold">You completed a task!</span>
-            </div>
-          )
-        });
+        setShowConfetti(true);
       }
     }
   };
@@ -148,6 +141,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       value={{
         tasks,
         notes,
+        showConfetti,
+        setShowConfetti,
         addTask,
         updateTask,
         toggleTaskCompletion,

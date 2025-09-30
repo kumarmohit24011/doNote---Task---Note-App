@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AppProvider } from "@/components/providers/app-provider";
+import { AppProvider, useAppStore } from "@/components/providers/app-provider";
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   Activity,
@@ -33,9 +33,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useState, useEffect } from "react";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -115,14 +117,24 @@ function UserMenu() {
     );
   }
 
-export default function AppLayout({ children }: { children: ReactNode }) {
-    const { user } = useAuth();
-    const [isSheetOpen, setIsSheetOpen] = useState(false);
+function AppLayoutContent({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const { showConfetti, setShowConfetti } = useAppStore();
+  const { width, height } = useWindowSize();
 
-    if (!user) return null;
+  useEffect(() => {
+    if (showConfetti) {
+      const timer = setTimeout(() => setShowConfetti(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [showConfetti, setShowConfetti]);
+
+  if (!user) return null;
     
   return (
-    <AppProvider>
+    <>
+      {showConfetti && <Confetti width={width} height={height} recycle={false} numberOfPieces={500} />}
       <div className="grid min-h-screen w-full md:grid-cols-[240px_1fr]">
         <div className="hidden border-r bg-card md:block">
           <div className="flex h-full max-h-screen flex-col gap-2">
@@ -183,6 +195,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           </main>
         </div>
       </div>
-    </AppProvider>
+    </>
   );
+}
+
+
+export default function AppLayout({ children }: { children: ReactNode }) {
+  return (
+    <AppProvider>
+      <AppLayoutContent>{children}</AppLayoutContent>
+    </AppProvider>
+  )
 }
