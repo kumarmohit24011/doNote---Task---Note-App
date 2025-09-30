@@ -120,21 +120,31 @@ function UserMenu() {
 function AppLayoutContent({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const { showConfetti, setShowConfetti } = useAppStore();
+  const { showConfetti, setShowConfetti, completionMessage, setCompletionMessage } = useAppStore();
   const { width, height } = useWindowSize();
 
   useEffect(() => {
     if (showConfetti) {
-      const timer = setTimeout(() => setShowConfetti(false), 4000);
+      const timer = setTimeout(() => {
+        setShowConfetti(false);
+        setCompletionMessage("");
+      }, 4000);
       return () => clearTimeout(timer);
     }
-  }, [showConfetti, setShowConfetti]);
+  }, [showConfetti, setShowConfetti, setCompletionMessage]);
 
   if (!user) return null;
     
   return (
     <>
       {showConfetti && <Confetti width={width} height={height} recycle={false} numberOfPieces={500} />}
+      {completionMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div className="text-5xl font-bold text-primary animate-in fade-in-0 zoom-in-75 slide-in-from-bottom-10 duration-500">
+            {completionMessage}
+          </div>
+        </div>
+      )}
       <div className="grid min-h-screen w-full md:grid-cols-[240px_1fr]">
         <div className="hidden border-r bg-card md:block">
           <div className="flex h-full max-h-screen flex-col gap-2">

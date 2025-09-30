@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/components/providers/app-provider";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,15 @@ const taskFormSchema = z.object({
 
 type TaskFormValues = z.infer<typeof taskFormSchema>;
 
+const quotes = [
+    "The secret of getting ahead is getting started.",
+    "A goal without a plan is just a wish.",
+    "The journey of a thousand miles begins with a single step.",
+    "Well begun is half done.",
+];
+const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+
 export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
   const { addTask } = useAppStore();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -64,7 +73,7 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
         dueDate: format(data.dueDate, "yyyy-MM-dd"),
         description: data.description || "",
       });
-      toast({ title: "Task added!", description: "Another one down, you've got this!" });
+      toast({ title: "Task added!", description: "One step closer to your goals." });
       onFinished();
     } catch (error) {
       toast({ title: "Error", description: "Could not add task. Please try again.", variant: "destructive" });
@@ -74,6 +83,10 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-2">
+        <div className="flex items-start gap-3 text-xs text-muted-foreground bg-secondary/70 p-3 rounded-md">
+            <Lightbulb className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <p className="font-medium">"{randomQuote}"</p>
+        </div>
         <FormField
           control={form.control}
           name="title"

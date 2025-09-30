@@ -17,12 +17,12 @@ import {
 import type { Task, Note } from "@/lib/types";
 import { useAuth } from "./auth-provider";
 import { app } from "@/lib/firebase";
-import { toast } from "@/hooks/use-toast";
 
 interface AppStore {
   tasks: Task[];
   notes: Note[];
   showConfetti: boolean;
+  completionMessage: string;
   addTask: (task: Omit<Task, "id" | "completed" | "createdAt">) => Promise<void>;
   updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
   toggleTaskCompletion: (id: string) => Promise<void>;
@@ -31,6 +31,7 @@ interface AppStore {
   updateNote: (id: string, updates: Partial<Note>) => Promise<void>;
   deleteNote: (id: string) => Promise<void>;
   setShowConfetti: (show: boolean) => void;
+  setCompletionMessage: (message: string) => void;
 }
 
 const AppContext = createContext<AppStore | null>(null);
@@ -41,6 +42,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [completionMessage, setCompletionMessage] = useState("");
   const db = getDatabase(app);
 
   useEffect(() => {
@@ -102,7 +104,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       if (newCompletedState) {
         setShowConfetti(true);
-        toast({ title: "Great job!", description: `You've completed "${taskToToggle.title}".` });
+        setCompletionMessage("Great Job!");
       }
     }
   };
@@ -144,7 +146,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         tasks,
         notes,
         showConfetti,
+        completionMessage,
         setShowConfetti,
+        setCompletionMessage,
         addTask,
         updateTask,
         toggleTaskCompletion,
