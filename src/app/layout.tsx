@@ -34,6 +34,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#2563eb" />
+        <link rel="icon" href="/icon-192x192.svg" type="image/svg+xml" sizes="any" />
       </head>
       <body className={cn("min-h-screen bg-background antialiased", inter.variable, poppins.variable)}>
         <AuthProvider>
