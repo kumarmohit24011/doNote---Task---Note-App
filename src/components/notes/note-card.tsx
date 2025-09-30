@@ -1,6 +1,10 @@
 
 "use client";
 
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { format } from "date-fns";
 import { Note } from "@/lib/types";
 import {
@@ -11,11 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { MoreVertical, Trash2 } from "lucide-react";
+import { MoreVertical, Trash2, Pencil, Save, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -32,18 +37,101 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
+  } from "@/components/ui/form";
+
+const noteEditSchema = z.object({
+    title: z.string().min(3, { message: "Title must be at least 3 characters." }),
+    content: z.string().min(3, { message: "Content must be at least 3 characters." }),
+});
+
+type NoteEditValues = z.infer<typeof noteEditSchema>;
+
 
 export function NoteCard({ note }: { note: Note }) {
-  const { deleteNote } = useAppStore();
+  const { updateNote, deleteNote } = useAppStore();
+  const [isEditing, setIsEditing] = useState(false);
+
+  const form = useForm<NoteEditValues>({
+    resolver: zodResolver(noteEditSchema),
+    defaultValues: {
+      title: note.title,
+      content: note.content,
+    },
+  });
 
   const handleDelete = async () => {
     try {
-        await deleteNote(note.id);
-        toast({ title: "Note deleted", description: `"${note.title}" was successfully deleted.` });
+      await deleteNote(note.id);
+      toast({ title: "Note deleted", description: `"${note.title}" was successfully deleted.` });
     } catch (error) {
-        toast({ title: "Error", description: "Could not delete note. Please try again.", variant: "destructive" });
+      toast({ title: "Error", description: "Could not delete note. Please try again.", variant: "destructive" });
     }
   };
+
+  async function onEditSubmit(data: NoteEditValues) {
+    try {
+        await updateNote(note.id, data);
+        toast({ title: "Note updated!", description: "Your changes have been saved." });
+        setIsEditing(false);
+    } catch (error) {
+        toast({ title: "Error", description: "Could not update note. Please try again.", variant: "destructive" });
+    }
+  }
+
+  if (isEditing) {
+    return (
+        <Card className="flex flex-col animate-in fade-in-0 zoom-in-95 duration-300">
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onEditSubmit)} className="flex flex-col h-full">
+                    <CardHeader>
+                        <FormField
+                            control={form.control}
+                            name="title"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Input placeholder="Note title" {...field} className="text-xl font-bold font-headline p-0 border-0 shadow-none focus-visible:ring-0"/>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                        <FormField
+                            control={form.control}
+                            name="content"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Textarea placeholder="Jot down your thoughts..." {...field} className="text-md min-h-[120px] p-0 border-0 shadow-none focus-visible:ring-0" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </CardContent>
+                    <CardFooter className="flex justify-end gap-2">
+                        <Button type="button" variant="ghost" onClick={() => setIsEditing(false)}>
+                            <X className="mr-2" /> Cancel
+                        </Button>
+                        <Button type="submit" disabled={form.formState.isSubmitting}>
+                            <Save className="mr-2" /> Save
+                        </Button>
+                    </CardFooter>
+                </form>
+            </Form>
+        </Card>
+    )
+  }
 
   return (
     <Card className="flex flex-col animate-in fade-in-0 zoom-in-95 duration-500 hover:shadow-xl transition-shadow bg-card/80 dark:bg-card">
@@ -58,6 +146,11 @@ export function NoteCard({ note }: { note: Note }) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem className="cursor-pointer text-base" onClick={() => { form.reset(); setIsEditing(true); }}>
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <AlertDialogTrigger asChild>
                     <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer text-base">
                       <Trash2 className="mr-2 h-4 w-4" />
@@ -96,3 +189,4 @@ export function NoteCard({ note }: { note: Note }) {
     </Card>
   );
 }
+
