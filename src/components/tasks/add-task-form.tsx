@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const taskFormSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters." }),
