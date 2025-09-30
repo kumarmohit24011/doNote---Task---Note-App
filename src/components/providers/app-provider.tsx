@@ -86,6 +86,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       completed: false,
       createdAt: serverTimestamp(),
     });
+    setCompletionMessage("Task Added!");
+    setShowConfetti(true);
   };
 
   const updateTask = async (id: string, updates: Partial<Task>) => {

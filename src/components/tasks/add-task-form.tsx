@@ -50,12 +50,16 @@ const quotes = [
     "The journey of a thousand miles begins with a single step.",
     "Well begun is half done.",
 ];
-const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 
 
 export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
   const { addTask } = useAppStore();
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [randomQuote, setRandomQuote] = useState('');
+
+  useEffect(() => {
+    setRandomQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+  }, []);
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
@@ -73,7 +77,6 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
         dueDate: format(data.dueDate, "yyyy-MM-dd"),
         description: data.description || "",
       });
-      toast({ title: "Task added!", description: "One step closer to your goals." });
       onFinished();
     } catch (error) {
       toast({ title: "Error", description: "Could not add task. Please try again.", variant: "destructive" });

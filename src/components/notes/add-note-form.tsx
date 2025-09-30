@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { Lightbulb } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const noteFormSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters." }),
@@ -32,11 +33,16 @@ const quotes = [
     "Capture the fleeting moments of inspiration.",
     "Turn your can'ts into cans and your dreams into plans.",
 ];
-const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 
 
 export function AddNoteForm({ onFinished }: { onFinished?: () => void }) {
   const { addNote } = useAppStore();
+  const [randomQuote, setRandomQuote] = useState('');
+
+  useEffect(() => {
+    setRandomQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+  }, []);
+
   const form = useForm<NoteFormValues>({
     resolver: zodResolver(noteFormSchema),
     defaultValues: {
