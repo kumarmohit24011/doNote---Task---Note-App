@@ -22,6 +22,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "doNote",
   description: "Manage your daily tasks and notes with doNote.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -31,6 +32,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="theme-color" content="#2563eb" />
+      </head>
       <body className={cn("min-h-screen bg-background antialiased", inter.variable, poppins.variable)}>
         <AuthProvider>
             {children}
