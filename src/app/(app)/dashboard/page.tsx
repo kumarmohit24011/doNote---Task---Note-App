@@ -139,7 +139,7 @@ function RecentTaskItem({ task }: { task: Task }) {
 }
 
 export default function DashboardPage() {
-  const { tasks, notes, streak } = useAppStore();
+  const { tasks, streak } = useAppStore();
   const [randomQuote, setRandomQuote] = useState<{ text: string; author: string } | null>(null);
 
   useEffect(() => {
@@ -150,8 +150,6 @@ export default function DashboardPage() {
     .filter((task) => !task.completed)
     .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
     .slice(0, 5);
-  
-  const recentNotes = notes.slice(0, 4);
   
   const openTasks = tasks.filter(task => !task.completed);
 
@@ -175,7 +173,7 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Open Tasks</CardTitle>
@@ -184,16 +182,6 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">{openTasks.length}</div>
             <p className="text-xs text-muted-foreground">tasks to be completed</p>
-          </CardContent>
-        </Card>
-        <Card className="hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Notes</CardTitle>
-            <StickyNote className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{notes.length}</div>
-            <p className="text-xs text-muted-foreground">notes created</p>
           </CardContent>
         </Card>
         <Card className="hover:shadow-md transition-shadow">
@@ -207,7 +195,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6">
         <Card>
           <CardHeader>
             <div className="text-lg font-bold font-headline">Upcoming Tasks</div>
@@ -217,23 +205,6 @@ export default function DashboardPage() {
               upcomingTasks.map((task) => <RecentTaskItem key={task.id} task={task} />)
             ) : (
               <p className="text-sm text-center text-muted-foreground py-4">No upcoming tasks. <Link href="/tasks" className="text-primary hover:underline">Add one!</Link></p>
-            )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <div className="text-lg font-bold font-headline">Recent Notes</div>
-          </CardHeader>
-          <CardContent className="grid gap-3 pt-0">
-            {recentNotes.length > 0 ? (
-              recentNotes.map((note) => (
-                <div key={note.id} className="grid gap-1 p-2.5 rounded-lg hover:bg-secondary transition-colors">
-                  <p className="text-sm font-semibold">{note.title}</p>
-                  <p className="text-xs text-muted-foreground truncate">{note.content}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-center text-muted-foreground py-4">No recent notes. <Link href="/notes" className="text-primary hover:underline">Create one!</Link></p>
             )}
           </CardContent>
         </Card>
