@@ -1,5 +1,5 @@
 {
-  "name": "doNote - Your Task & Note Companion",
+  "name": "doNote",
   "short_name": "doNote",
   "description": "Manage your daily tasks and notes with doNote.",
   "start_url": "/",
@@ -8,12 +8,12 @@
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
@@ -24,14 +24,14 @@
       "short_name": "New Task",
       "description": "Create a new task",
       "url": "/tasks",
-      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "New Note",
       "short_name": "New Note",
       "description": "Create a new note",
       "url": "/notes",
-      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
     }
   ]
 }
