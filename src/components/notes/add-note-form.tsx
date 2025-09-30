@@ -24,7 +24,7 @@ const noteFormSchema = z.object({
 
 type NoteFormValues = z.infer<typeof noteFormSchema>;
 
-export function AddNoteForm() {
+export function AddNoteForm({ onFinished }: { onFinished?: () => void }) {
   const { addNote } = useAppStore();
   const form = useForm<NoteFormValues>({
     resolver: zodResolver(noteFormSchema),
@@ -39,6 +39,7 @@ export function AddNoteForm() {
         await addNote(data);
         toast({ title: "Note created!", description: `A new note titled "${data.title}" has been saved.` });
         form.reset();
+        onFinished?.();
     } catch (error) {
         toast({ title: "Error", description: "Could not create note. Please try again.", variant: "destructive" });
     }
@@ -52,7 +53,7 @@ export function AddNoteForm() {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base font-semibold">Title</FormLabel>
+              <FormLabel className="font-semibold">Title</FormLabel>
               <FormControl>
                 <Input placeholder="e.g. Ideas for new project" {...field} />
               </FormControl>
@@ -65,9 +66,9 @@ export function AddNoteForm() {
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base font-semibold">Content</FormLabel>
+              <FormLabel className="font-semibold">Content</FormLabel>
               <FormControl>
-                <Textarea placeholder="Jot down your thoughts..." className="min-h-[120px]" {...field} />
+                <Textarea placeholder="Jot down your thoughts..." className="min-h-[100px]" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
