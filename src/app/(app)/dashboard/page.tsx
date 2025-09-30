@@ -64,7 +64,7 @@ export default function DashboardPage() {
             <Quote className="h-6 w-6 text-primary" />
             {randomQuote ? (
               <div>
-                <blockquote className="text-sm font-semibold text-primary-foreground">
+                <blockquote className="text-sm font-semibold text-primary">
                   "{randomQuote.text}"
                 </blockquote>
                 <p className="text-xs text-primary/80 mt-1">- {randomQuote.author}</p>
