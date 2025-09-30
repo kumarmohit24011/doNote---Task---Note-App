@@ -8,6 +8,15 @@ import Link from "next/link";
 import { Task } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+
+const quotes = [
+  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+  { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+  { text: "Act as if what you do makes a difference. It does.", author: "William James" }
+];
 
 function RecentTaskItem({ task }: { task: Task }) {
   const priorityStyles = {
@@ -32,6 +41,11 @@ function RecentTaskItem({ task }: { task: Task }) {
 
 export default function DashboardPage() {
   const { tasks, notes } = useAppStore();
+  const [randomQuote, setRandomQuote] = useState<{ text: string; author: string } | null>(null);
+
+  useEffect(() => {
+    setRandomQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+  }, []);
 
   const upcomingTasks = tasks
     .filter((task) => !task.completed)
@@ -48,12 +62,16 @@ export default function DashboardPage() {
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
             <Quote className="h-6 w-6 text-primary" />
-            <div>
-              <blockquote className="text-sm font-semibold text-primary-foreground">
-                "The secret of getting ahead is getting started."
-              </blockquote>
-              <p className="text-xs text-primary/80 mt-1">- Mark Twain</p>
-            </div>
+            {randomQuote ? (
+              <div>
+                <blockquote className="text-sm font-semibold text-primary-foreground">
+                  "{randomQuote.text}"
+                </blockquote>
+                <p className="text-xs text-primary/80 mt-1">- {randomQuote.author}</p>
+              </div>
+            ) : (
+                <div className="h-8 w-full animate-pulse rounded-md bg-primary/20" />
+            )}
           </div>
         </CardContent>
       </Card>
