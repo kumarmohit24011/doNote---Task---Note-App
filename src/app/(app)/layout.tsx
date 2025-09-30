@@ -13,6 +13,8 @@ import {
   ListTodo,
   LogOut,
   User as UserIcon,
+  Palette,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +32,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -38,6 +46,7 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
+import { useTheme } from "@/components/providers/theme-provider";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -79,6 +88,7 @@ function NavLink({
 
 function UserMenu() {
     const { user } = useAuth();
+    const { theme, setTheme } = useTheme();
   
     const handleSignOut = async () => {
       await signOut(auth);
@@ -107,6 +117,23 @@ function UserMenu() {
               </p>
             </div>
           </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="cursor-pointer text-sm py-2">
+                <Palette className="mr-2 h-4 w-4" />
+                <span>Theme</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                    <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+                        <DropdownMenuRadioItem value="theme-default">Default</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="theme-sunset">Sunset</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="theme-ocean">Ocean</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="theme-forest">Forest</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-sm py-2">
             <LogOut className="mr-2 h-4 w-4" />

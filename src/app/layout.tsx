@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Inter, Poppins } from "next/font/google";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,9 +38,11 @@ export default function RootLayout({
         <link rel="icon" href="/icon-192x192.png" type="image/png" sizes="any" />
       </head>
       <body className={cn("min-h-screen bg-background antialiased", inter.variable, poppins.variable)}>
-        <AuthProvider>
-            {children}
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+              {children}
+          </AuthProvider>
+        </ThemeProvider>
         <Toaster />
       </body>
     </html>
