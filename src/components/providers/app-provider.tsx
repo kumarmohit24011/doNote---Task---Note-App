@@ -146,7 +146,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 // If last completion was yesterday, increment streak, otherwise start from 1
                 const newStreak = (lastCompleted && isSameDay(lastCompleted, startOfYesterday())) ? (currentData.streak || 0) + 1 : 1;
                 currentData.streak = newStreak;
-                current_data.lastCompletedDate = today.toISOString();
+                currentData.lastCompletedDate = today.toISOString();
             }
           } else {
             // No previous data, start a new streak
