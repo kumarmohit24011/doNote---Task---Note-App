@@ -64,12 +64,12 @@ function NavLink({
       href={href}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-4 rounded-lg px-4 py-3 text-muted-foreground transition-all hover:text-primary hover:bg-primary/10",
+        "flex items-center gap-3 rounded-md px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-primary/10",
         isActive && "bg-primary/10 text-primary font-semibold",
-        isMobile && "text-xl"
+        isMobile ? "text-lg" : "text-sm"
       )}
     >
-      <Icon className="h-5 w-5" />
+      <Icon className="h-4 w-4" />
       <span>{label}</span>
     </Link>
   );
@@ -87,27 +87,27 @@ function UserMenu() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-            <Avatar className="h-10 w-10 border-2 border-primary/50">
+          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+            <Avatar className="h-8 w-8 border-2 border-primary/50">
               <AvatarImage src={user.photoURL || ""} alt={user.displayName || ""} />
               <AvatarFallback>
-                <UserIcon/>
+                <UserIcon className="w-4 h-4"/>
               </AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-64" align="end" forceMount>
+        <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1 py-1">
-              <p className="text-md font-medium leading-none">{user.displayName}</p>
-              <p className="text-sm leading-none text-muted-foreground">
+              <p className="text-sm font-medium leading-none">{user.displayName}</p>
+              <p className="text-xs leading-none text-muted-foreground">
                 {user.email}
               </p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-base py-2">
-            <LogOut className="mr-3 h-5 w-5" />
+          <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-sm py-2">
+            <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -123,17 +123,17 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     
   return (
     <AppProvider>
-      <div className="grid min-h-screen w-full md:grid-cols-[280px_1fr]">
+      <div className="grid min-h-screen w-full md:grid-cols-[240px_1fr]">
         <div className="hidden border-r bg-card md:block">
-          <div className="flex h-full max-h-screen flex-col gap-4">
-            <div className="flex h-20 items-center border-b px-8">
-              <Link href="/" className="flex items-center gap-3 font-semibold text-primary">
-                <Activity className="h-7 w-7" />
-                <span className="text-2xl font-headline font-bold">doNote</span>
+          <div className="flex h-full max-h-screen flex-col gap-2">
+            <div className="flex h-16 items-center border-b px-6">
+              <Link href="/" className="flex items-center gap-2 font-semibold text-primary">
+                <Activity className="h-6 w-6" />
+                <span className="text-xl font-headline font-bold">doNote</span>
               </Link>
             </div>
-            <div className="flex-1">
-              <nav className="grid items-start px-6 text-lg font-medium">
+            <div className="flex-1 overflow-y-auto">
+              <nav className="grid items-start p-4 text-sm font-medium">
                 {navItems.map((item) => (
                   <NavLink key={item.href} {...item} />
                 ))}
@@ -142,32 +142,32 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div className="flex flex-col bg-secondary/50">
-          <header className="flex h-20 items-center gap-4 border-b bg-card px-6">
+          <header className="flex h-16 items-center gap-4 border-b bg-card px-4">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="shrink-0 md:hidden"
+                  className="shrink-0 md:hidden h-8 w-8"
                 >
-                  <Menu className="h-6 w-6" />
+                  <Menu className="h-4 w-4" />
                   <span className="sr-only">Toggle navigation menu</span>
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="flex flex-col">
-                <SheetHeader>
-                  <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                  <SheetDescription className="sr-only">
+                <SheetHeader className="sr-only">
+                  <SheetTitle>Navigation Menu</SheetTitle>
+                  <SheetDescription>
                     Select a page to navigate to.
                   </SheetDescription>
                 </SheetHeader>
-                <nav className="grid gap-4 text-xl font-medium">
+                <nav className="grid gap-2 text-lg font-medium">
                   <Link
                     href="#"
-                    className="flex items-center gap-3 text-lg font-semibold mb-4 text-primary"
+                    className="flex items-center gap-2 text-lg font-semibold mb-2 text-primary"
                   >
-                    <Activity className="h-7 w-7" />
-                    <span className="text-2xl font-headline font-bold">doNote</span>
+                    <Activity className="h-6 w-6" />
+                    <span className="text-xl font-headline font-bold">doNote</span>
                   </Link>
                   {navItems.map((item) => (
                     <NavLink key={item.href} {...item} isMobile onClick={() => setIsSheetOpen(false)} />
@@ -178,7 +178,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <div className="w-full flex-1" />
             <UserMenu />
           </header>
-          <main className="flex flex-1 flex-col gap-6 p-6 lg:gap-8 lg:p-10">
+          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             {children}
           </main>
         </div>

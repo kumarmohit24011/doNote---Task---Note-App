@@ -16,13 +16,13 @@ function RecentTaskItem({ task }: { task: Task }) {
     low: "border-green-500/60 bg-green-500/10 text-green-700 dark:text-green-400",
   };
   return (
-    <div className="flex items-center gap-4 hover:bg-secondary p-3 rounded-lg transition-colors">
+    <div className="flex items-center gap-4 hover:bg-secondary p-2.5 rounded-lg transition-colors">
       <div className="grid gap-1 flex-1">
-        <p className="text-md font-medium leading-none">{task.title}</p>
-        <p className="text-sm text-muted-foreground">{new Date(task.dueDate).toLocaleDateString()}</p>
+        <p className="text-sm font-medium leading-none">{task.title}</p>
+        <p className="text-xs text-muted-foreground">{new Date(task.dueDate).toLocaleDateString()}</p>
       </div>
       <div className="ml-auto font-medium">
-        <Badge variant="outline" className={cn("capitalize text-sm font-normal", priorityStyles[task.priority])}>
+        <Badge variant="outline" className={cn("capitalize text-xs font-normal", priorityStyles[task.priority])}>
           {task.priority}
         </Badge>
       </div>
@@ -43,56 +43,56 @@ export default function DashboardPage() {
   const openTasks = tasks.filter(task => !task.completed);
 
   return (
-    <div className="flex flex-col gap-6 md:gap-8">
-      <div className="grid grid-cols-2 gap-4 md:gap-6">
+    <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-2 gap-6">
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-base md:text-lg font-medium">Open Tasks</CardTitle>
-            <ListTodo className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Open Tasks</CardTitle>
+            <ListTodo className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="p-4 md:p-6 pt-0">
-            <div className="text-3xl md:text-4xl font-bold">{openTasks.length}</div>
-            <p className="text-sm md:text-md text-muted-foreground">tasks to be completed</p>
+          <CardContent>
+            <div className="text-2xl font-bold">{openTasks.length}</div>
+            <p className="text-xs text-muted-foreground">tasks to be completed</p>
           </CardContent>
         </Card>
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-base md:text-lg font-medium">Total Notes</CardTitle>
-            <StickyNote className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Notes</CardTitle>
+            <StickyNote className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="p-4 md:p-6 pt-0">
-            <div className="text-3xl md:text-4xl font-bold">{notes.length}</div>
-            <p className="text-sm md:text-md text-muted-foreground">notes created</p>
+          <CardContent>
+            <div className="text-2xl font-bold">{notes.length}</div>
+            <p className="text-xs text-muted-foreground">notes created</p>
           </CardContent>
         </Card>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <div className="text-xl md:text-2xl font-bold font-headline">Upcoming Tasks</div>
+            <div className="text-lg font-bold font-headline">Upcoming Tasks</div>
           </CardHeader>
-          <CardContent className="grid gap-2 p-4 md:p-6 pt-0">
+          <CardContent className="grid gap-1.5 pt-0">
             {upcomingTasks.length > 0 ? (
               upcomingTasks.map((task) => <RecentTaskItem key={task.id} task={task} />)
             ) : (
-              <p className="text-md text-center text-muted-foreground py-6">No upcoming tasks. <Link href="/tasks" className="text-primary hover:underline">Add one!</Link></p>
+              <p className="text-sm text-center text-muted-foreground py-4">No upcoming tasks. <Link href="/tasks" className="text-primary hover:underline">Add one!</Link></p>
             )}
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <div className="text-xl md:text-2xl font-bold font-headline">Recent Notes</div>
+            <div className="text-lg font-bold font-headline">Recent Notes</div>
           </CardHeader>
-          <CardContent className="grid gap-4 p-4 md:p-6 pt-0">
+          <CardContent className="grid gap-3 pt-0">
             {recentNotes.length > 0 ? (
               recentNotes.map((note) => (
-                <div key={note.id} className="grid gap-1.5 p-3 rounded-lg hover:bg-secondary transition-colors">
-                  <p className="text-md font-semibold">{note.title}</p>
-                  <p className="text-sm text-muted-foreground truncate">{note.content}</p>
+                <div key={note.id} className="grid gap-1 p-2.5 rounded-lg hover:bg-secondary transition-colors">
+                  <p className="text-sm font-semibold">{note.title}</p>
+                  <p className="text-xs text-muted-foreground truncate">{note.content}</p>
                 </div>
               ))
             ) : (
-              <p className="text-md text-center text-muted-foreground py-6">No recent notes. <Link href="/notes" className="text-primary hover:underline">Create one!</Link></p>
+              <p className="text-sm text-center text-muted-foreground py-4">No recent notes. <Link href="/notes" className="text-primary hover:underline">Create one!</Link></p>
             )}
           </CardContent>
         </Card>

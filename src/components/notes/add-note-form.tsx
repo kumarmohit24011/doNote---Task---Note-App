@@ -46,13 +46,13 @@ export function AddNoteForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg font-semibold">Title</FormLabel>
+              <FormLabel className="text-base font-semibold">Title</FormLabel>
               <FormControl>
                 <Input placeholder="e.g. Ideas for new project" {...field} />
               </FormControl>
@@ -65,15 +65,15 @@ export function AddNoteForm() {
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-lg font-semibold">Content</FormLabel>
+              <FormLabel className="text-base font-semibold">Content</FormLabel>
               <FormControl>
-                <Textarea placeholder="Jot down your thoughts..." className="min-h-[150px]" {...field} />
+                <Textarea placeholder="Jot down your thoughts..." className="min-h-[120px]" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" size="lg" disabled={form.formState.isSubmitting}>
+        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting ? 'Saving Note...' : 'Save Note'}
         </Button>
       </form>

@@ -21,18 +21,18 @@ export default function TasksPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-bold font-headline">My Tasks</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold font-headline">My Tasks</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="lg">
-              <PlusCircle className="mr-2 h-5 w-5" />
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" />
               Add Task
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[520px]">
+          <DialogContent className="sm:max-w-[480px]">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold font-headline">Add a new task</DialogTitle>
+              <DialogTitle className="text-lg font-bold font-headline">Add a new task</DialogTitle>
             </DialogHeader>
             <AddTaskForm onFinished={() => setIsDialogOpen(false)} />
           </DialogContent>
