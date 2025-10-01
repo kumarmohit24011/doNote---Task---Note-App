@@ -1,6 +1,6 @@
 
 export type Priority = "low" | "medium" | "high";
-export type Reminder = "none" | "5-minutes-before" | "1-hour-before" | "1-day-before";
+export type Reminder = "none" | "on-due-date";
 
 export interface Task {
   id: string;

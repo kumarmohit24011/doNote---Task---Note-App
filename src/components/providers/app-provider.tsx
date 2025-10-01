@@ -18,7 +18,7 @@ import {
 import type { Task, Note, UserData, Reminder } from "@/lib/types";
 import { useAuth } from "./auth-provider";
 import { app } from "@/lib/firebase";
-import { isSameDay, startOfYesterday, subMinutes, subHours, subDays, parseISO } from 'date-fns';
+import { isSameDay, startOfYesterday, parseISO, isToday } from 'date-fns';
 
 interface AppStore {
   tasks: Task[];
@@ -118,32 +118,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
             return;
         }
 
-        const now = new Date();
         tasks.forEach(task => {
-            if (task.completed || task.reminder === 'none' || task.reminderSent) {
+            if (task.completed || task.reminder !== 'on-due-date' || task.reminderSent) {
                 return;
             }
 
             const dueDate = parseISO(task.dueDate);
-            let reminderTime: Date | null = null;
             
-            switch (task.reminder) {
-                case '5-minutes-before':
-                    reminderTime = subMinutes(dueDate, 5);
-                    break;
-                case '1-hour-before':
-                    reminderTime = subHours(dueDate, 1);
-                    break;
-                case '1-day-before':
-                    reminderTime = subDays(dueDate, 1);
-                    break;
-                default:
-                    break;
-            }
-
-            if (reminderTime && now >= reminderTime && now < dueDate) {
+            if (isToday(dueDate)) {
                 new Notification('Task Reminder', {
-                    body: `Your task "${task.title}" is due soon.`,
+                    body: `Your task "${task.title}" is due today!`,
                     icon: '/icon-192x192.png',
                 });
                 updateTask(task.id, { reminderSent: true });
@@ -151,7 +135,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         });
     };
 
-    const intervalId = setInterval(checkReminders, 30000); // Check every 30 seconds
+    // Check once a minute
+    const intervalId = setInterval(checkReminders, 60000); 
+    
+    // Also check when tasks change
+    checkReminders();
+
     return () => clearInterval(intervalId);
   }, [tasks, user]);
 

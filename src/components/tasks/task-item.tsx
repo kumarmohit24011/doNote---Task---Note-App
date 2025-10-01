@@ -53,9 +53,7 @@ export function TaskItem({
 
   const reminderText = {
       "none": "",
-      "5-minutes-before": "5 minutes before",
-      "1-hour-before": "1 hour before",
-      "1-day-before": "1 day before"
+      "on-due-date": "On due date",
   }
 
   return (
@@ -109,7 +107,7 @@ export function TaskItem({
                   "text-xs text-muted-foreground",
                   isTaskOverdue && "text-destructive font-semibold"
                 )}>
-                  {format(dueDate, "MMM d, yyyy 'at' h:mm a")}
+                  {format(dueDate, "MMM d, yyyy")}
                 </span>
                 {task.reminder && task.reminder !== 'none' && (
                     <TooltipProvider>
