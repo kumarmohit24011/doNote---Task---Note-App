@@ -1,7 +1,7 @@
 
 "use client";
 
-import { format, isToday } from "date-fns";
+import { format, isToday, parseISO, isPast } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Task } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
@@ -47,8 +47,8 @@ export function TaskItem({
     low: "border-sky-500/60 bg-sky-500/10 text-sky-600 dark:text-sky-400",
   };
   
-  const dueDate = new Date(task.dueDate);
-  const isTaskOverdue = !task.completed && dueDate < new Date(new Date().setHours(0,0,0,0));
+  const dueDate = parseISO(task.dueDate);
+  const isTaskOverdue = !task.completed && isPast(dueDate);
   const isDueToday = !task.completed && isToday(dueDate);
 
   const reminderText = {
@@ -109,7 +109,7 @@ export function TaskItem({
                   "text-xs text-muted-foreground",
                   isTaskOverdue && "text-destructive font-semibold"
                 )}>
-                  {format(dueDate, "MMM d, yyyy")}
+                  {format(dueDate, "MMM d, yyyy 'at' h:mm a")}
                 </span>
                 {task.reminder && task.reminder !== 'none' && (
                     <TooltipProvider>

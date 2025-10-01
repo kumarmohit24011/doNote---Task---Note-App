@@ -4,8 +4,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { format } from "date-fns";
-import { CalendarIcon, Lightbulb } from "lucide-react";
+import { format, set, parse } from "date-fns";
+import { CalendarIcon, Lightbulb, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/components/providers/app-provider";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,7 @@ const taskFormSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters." }),
   description: z.string().optional(),
   dueDate: z.date({ required_error: "A due date is required." }),
+  dueTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, { message: "Invalid time format (HH:mm)." }),
   priority: z.enum(["low", "medium", "high"]),
   reminder: z.custom<Reminder>(),
 });
@@ -52,7 +53,6 @@ const quotes = [
     "The journey of a thousand miles begins with a single step.",
     "Well begun is half done.",
 ];
-
 
 export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
   const { addTask } = useAppStore();
@@ -68,6 +68,7 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
     defaultValues: {
       title: "",
       description: "",
+      dueTime: "09:00",
       priority: "medium",
       reminder: "none",
     },
@@ -75,9 +76,12 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
 
   async function onSubmit(data: TaskFormValues) {
     try {
+      const [hours, minutes] = data.dueTime.split(':').map(Number);
+      const combinedDateTime = set(data.dueDate, { hours, minutes });
+
       await addTask({
         ...data,
-        dueDate: format(data.dueDate, "yyyy-MM-dd"),
+        dueDate: combinedDateTime.toISOString(),
         description: data.description || "",
       });
       onFinished();
@@ -164,6 +168,24 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
           />
           <FormField
             control={form.control}
+            name="dueTime"
+            render={({ field }) => (
+                <FormItem className="flex flex-col">
+                    <FormLabel>Time</FormLabel>
+                    <div className="relative">
+                      <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <FormControl>
+                          <Input type="time" className="pl-9" {...field} />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                </FormItem>
+            )}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
             name="priority"
             render={({ field }) => (
               <FormItem>
@@ -187,8 +209,7 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
               </FormItem>
             )}
           />
-        </div>
-        <FormField
+          <FormField
             control={form.control}
             name="reminder"
             render={({ field }) => (
@@ -214,6 +235,7 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
               </FormItem>
             )}
           />
+        </div>
         <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting ? 'Adding Task...' : 'Add Task'}
         </Button>

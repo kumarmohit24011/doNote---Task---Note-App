@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { TaskProgressChart } from "@/components/dashboard/task-progress-chart";
+import { parseISO } from "date-fns";
 
 const quotes = [
   { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
@@ -149,7 +150,7 @@ export default function DashboardPage() {
 
   const upcomingTasks = tasks
     .filter((task) => !task.completed)
-    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+    .sort((a, b) => parseISO(a.dueDate).getTime() - parseISO(b.dueDate).getTime())
     .slice(0, 5);
   
   const openTasks = tasks.filter(task => !task.completed);
@@ -228,5 +229,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

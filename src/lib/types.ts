@@ -6,7 +6,7 @@ export interface Task {
   id: string;
   title: string;
   description: string;
-  dueDate: string; // YYYY-MM-DD
+  dueDate: string; // ISO 8601 string
   priority: Priority;
   reminder: Reminder;
   reminderSent: boolean;

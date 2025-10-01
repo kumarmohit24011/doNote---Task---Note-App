@@ -141,7 +141,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     break;
             }
 
-            if (reminderTime && now >= reminderTime) {
+            if (reminderTime && now >= reminderTime && now < dueDate) {
                 new Notification('Task Reminder', {
                     body: `Your task "${task.title}" is due soon.`,
                     icon: '/icon-192x192.png',
@@ -151,7 +151,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         });
     };
 
-    const intervalId = setInterval(checkReminders, 60000); // Check every minute
+    const intervalId = setInterval(checkReminders, 30000); // Check every 30 seconds
     return () => clearInterval(intervalId);
   }, [tasks, user]);
 
