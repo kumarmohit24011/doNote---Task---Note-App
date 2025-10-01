@@ -15,10 +15,10 @@ import {
   orderByChild,
   runTransaction,
 } from "firebase/database";
-import type { Task, Note, UserData } from "@/lib/types";
+import type { Task, Note, UserData, Reminder } from "@/lib/types";
 import { useAuth } from "./auth-provider";
 import { app } from "@/lib/firebase";
-import { isSameDay, startOfYesterday } from 'date-fns';
+import { isSameDay, startOfYesterday, subMinutes, subHours, subDays, parseISO } from 'date-fns';
 
 interface AppStore {
   tasks: Task[];
@@ -26,7 +26,7 @@ interface AppStore {
   streak: number;
   showConfetti: boolean;
   completionMessage: string;
-  addTask: (task: Omit<Task, "id" | "completed" | "createdAt" | "completedAt">) => Promise<void>;
+  addTask: (task: Omit<Task, "id" | "completed" | "createdAt" | "completedAt" | "reminderSent">) => Promise<void>;
   updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
   toggleTaskCompletion: (id: string) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
@@ -39,6 +39,12 @@ interface AppStore {
 
 const AppContext = createContext<AppStore | null>(null);
 
+function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+        Notification.requestPermission();
+    }
+}
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -48,6 +54,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [showConfetti, setShowConfetti] = useState(false);
   const [completionMessage, setCompletionMessage] = useState("");
   const db = getDatabase(app);
+
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -101,12 +111,58 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [user, db]);
 
-  const addTask = async (task: Omit<Task, "id" | "completed" | "createdAt" | "completedAt">) => {
+  // Reminder checking logic
+  useEffect(() => {
+    const checkReminders = () => {
+        if (!user || 'Notification' !in window || Notification.permission !== 'granted') {
+            return;
+        }
+
+        const now = new Date();
+        tasks.forEach(task => {
+            if (task.completed || task.reminder === 'none' || task.reminderSent) {
+                return;
+            }
+
+            const dueDate = parseISO(task.dueDate);
+            let reminderTime: Date | null = null;
+            
+            switch (task.reminder) {
+                case '5-minutes-before':
+                    reminderTime = subMinutes(dueDate, 5);
+                    break;
+                case '1-hour-before':
+                    reminderTime = subHours(dueDate, 1);
+                    break;
+                case '1-day-before':
+                    reminderTime = subDays(dueDate, 1);
+                    break;
+                default:
+                    break;
+            }
+
+            if (reminderTime && now >= reminderTime) {
+                new Notification('Task Reminder', {
+                    body: `Your task "${task.title}" is due soon.`,
+                    icon: '/icon-192x192.png',
+                });
+                updateTask(task.id, { reminderSent: true });
+            }
+        });
+    };
+
+    const intervalId = setInterval(checkReminders, 60000); // Check every minute
+    return () => clearInterval(intervalId);
+  }, [tasks, user]);
+
+
+  const addTask = async (task: Omit<Task, "id" | "completed" | "createdAt" | "completedAt" | "reminderSent">) => {
     if (!user) return;
     const tasksRef = ref(db, `users/${user.uid}/tasks`);
     await push(tasksRef, {
       ...task,
       completed: false,
+      reminderSent: false,
       createdAt: serverTimestamp(),
       completedAt: null,
     });

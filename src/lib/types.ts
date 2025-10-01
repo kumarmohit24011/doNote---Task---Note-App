@@ -1,5 +1,6 @@
 
 export type Priority = "low" | "medium" | "high";
+export type Reminder = "none" | "5-minutes-before" | "1-hour-before" | "1-day-before";
 
 export interface Task {
   id: string;
@@ -7,6 +8,8 @@ export interface Task {
   description: string;
   dueDate: string; // YYYY-MM-DD
   priority: Priority;
+  reminder: Reminder;
+  reminderSent: boolean;
   completed: boolean;
   createdAt: number; // RTDB timestamp
   completedAt?: number | null; // RTDB timestamp

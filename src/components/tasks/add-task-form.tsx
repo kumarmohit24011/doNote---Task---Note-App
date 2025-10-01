@@ -34,12 +34,14 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
+import { Reminder } from "@/lib/types";
 
 const taskFormSchema = z.object({
   title: z.string().min(3, { message: "Title must be at least 3 characters." }),
   description: z.string().optional(),
   dueDate: z.date({ required_error: "A due date is required." }),
   priority: z.enum(["low", "medium", "high"]),
+  reminder: z.custom<Reminder>(),
 });
 
 type TaskFormValues = z.infer<typeof taskFormSchema>;
@@ -67,6 +69,7 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
       title: "",
       description: "",
       priority: "medium",
+      reminder: "none",
     },
   });
 
@@ -185,6 +188,32 @@ export function AddTaskForm({ onFinished }: { onFinished: () => void }) {
             )}
           />
         </div>
+        <FormField
+            control={form.control}
+            name="reminder"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Reminder</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Set a reminder" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="none">No reminder</SelectItem>
+                    <SelectItem value="5-minutes-before">5 minutes before</SelectItem>
+                    <SelectItem value="1-hour-before">1 hour before</SelectItem>
+                    <SelectItem value="1-day-before">1 day before</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting ? 'Adding Task...' : 'Add Task'}
         </Button>

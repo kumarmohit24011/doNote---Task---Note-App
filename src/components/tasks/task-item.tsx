@@ -11,7 +11,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, Trash2, Frown, Meh } from "lucide-react";
+import { ChevronDown, Trash2, Frown, Meh, Bell } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   AlertDialog,
@@ -50,6 +50,13 @@ export function TaskItem({
   const dueDate = new Date(task.dueDate);
   const isTaskOverdue = !task.completed && dueDate < new Date(new Date().setHours(0,0,0,0));
   const isDueToday = !task.completed && isToday(dueDate);
+
+  const reminderText = {
+      "none": "",
+      "5-minutes-before": "5 minutes before",
+      "1-hour-before": "1 hour before",
+      "1-day-before": "1 day before"
+  }
 
   return (
     <div
@@ -104,6 +111,18 @@ export function TaskItem({
                 )}>
                   {format(dueDate, "MMM d, yyyy")}
                 </span>
+                {task.reminder && task.reminder !== 'none' && (
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Bell className="h-3.5 w-3.5 text-muted-foreground" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p className="text-xs">Reminder: {reminderText[task.reminder]}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                )}
               </div>
             </div>
           </div>
